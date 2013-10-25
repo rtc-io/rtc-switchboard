@@ -1,8 +1,9 @@
 /* jshint node: true */
 'use strict';
 
-var debug = require('debug')('rtc-signaller-socket.io');
+var debug = require('debug')('rtc-signaller-primus');
 var Primus = require('primus');
+var parser = require('rtc-signaller/parser');
 
 var baseHandlers = {
   announce: require('./handlers/announce')
@@ -37,10 +38,39 @@ var baseHandlers = {
 
   <<< examples/override-primus.js
 
+  You can also provide different command handlers via opts also:
+
+  <<< examples/additional-handlers.js
+
 **/
 module.exports = function(server, opts) {
   // create the primus instance
   var primus = (opts || {}).primus || new Primus(server, opts);
+
+  // inject a primus request handler
+  server.on('request', function(req, res) {
+    if (req.url !== '/rtc.io/primus.js') {
+      return;
+    }
+      
+    res.writeHead(200, {
+      'content-type': 'application/javascript'
+    });
+
+    res.end(primus.library());
+  });
+
+  primus.on('connection', function(spark) {
+    console.log('spark connected');
+
+    spark.on('data', function(data) {
+      console.log(parser(data));
+    });
+
+    spark.on('end', function() {
+      console.log('spark disconnected');
+    });
+  });
 
   // // add any additional handlers
   // var handlers = (opts || {}).handlers || {};
