@@ -21,6 +21,22 @@ var baseHandlers = {
 
   <<< server.js
 
+  ## Reference
+
+**/
+
+/**
+  ### signaller(server, opts?)
+
+  Create the signaller that will work with primus.  By default calling
+  this function will create a new `Primus` instance and use the
+  pure [websockets adapter](https://github.com/primus/primus#websockets).
+
+  That behaviour can be overriden, however, by providing a prepared primus
+  instance in `opts.primus`, e.g:
+
+  <<< examples/override-primus.js
+
 **/
 module.exports = function(server, opts) {
   // create the primus instance

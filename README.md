@@ -29,6 +29,44 @@ server.listen(port, function(err) {
 });
 ```
 
+## Reference
+
+### signaller(server, opts?)
+
+Create the signaller that will work with primus.  By default calling
+this function will create a new `Primus` instance and use the
+pure [websockets adapter](https://github.com/primus/primus#websockets).
+
+That behaviour can be overriden, however, by providing a prepared primus
+instance in `opts.primus`, e.g:
+
+```js
+var server = require('http').createServer();
+var Primus = require('primus');
+
+// create the signaller, providing our own primus instance (using engine.io)
+var signaller = require('rtc-signaller-primus')(server, {
+  primus: new Primus(server, { transformer: 'engine.io' })
+});
+
+// start the server
+server.listen(3000);
+```
+
+## Custom Message Handlers
+
+The socket server is configured to handle some specific rtc.io signaller
+messages.  The handlers are stored in the `handlers/` folder of the
+repository and have details outlined below.
+
+### announce handler
+
+Will handle `/announce` messages and associate the peer id assigned by
+the client-side signaller with the socket on the server side.
+
+This will allow routing of messages to the correct receipient when
+`/to` messages are received.
+
 ## License(s)
 
 ### Apache 2.0

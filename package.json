@@ -23,6 +23,11 @@
     "url": "https://github.com/rtc-io/rtc-signaller-primus/issues"
   },
   "dependencies": {
-    "primus": "~1.4.4"
+    "primus": "~1.4.4",
+    "ws": "~0.4.31",
+    "debug": "~0.7.2"
+  },
+  "devDependencies": {
+    "engine.io": "~0.7.9"
   }
 }
