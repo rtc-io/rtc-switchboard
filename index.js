@@ -7,7 +7,7 @@ var parser = require('rtc-signaller/parser');
 var ConnectionManager = require('./manager');
 
 /**
-  # rtc-signaller-primus
+  # rtc-switchboard
 
   This is an rtc.io signaller that makes use of the excellent realtime
   abstraction library, [primus](https://github.com/primus/primus).

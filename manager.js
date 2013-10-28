@@ -1,7 +1,7 @@
 /* jshint node: true */
 'use strict';
 
-var debug = require('debug')('rtc-signaller-primus');
+var debug = require('debug')('rtc-switchboard');
 var through = require('through');
 var Room = require('./room');
 
@@ -72,7 +72,9 @@ ConnectionManager.prototype.connect = function(spark) {
     debug('spark ended, disconnecting');
 
     // send a leave message to connected sparks
-    spark.scope.write('/leave|' + spark.peerId, spark);
+    if (spark.peerId) {
+      spark.scope.write('/leave|' + spark.peerId, spark);
+    }
 
     // invoke the leave action if part of a room
     if (spark.scope && typeof spark.scope.leave == 'function') {

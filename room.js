@@ -1,7 +1,7 @@
 /* jshint node: true */
 'use strict';
 
-var debug = require('debug')('rtc-signaller-room');
+var debug = require('debug')('rtc-switchboard-room');
 
 function Room(name) {
   if (! (this instanceof Room)) {

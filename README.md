@@ -1,12 +1,12 @@
-# rtc-signaller-primus
+# rtc-switchboard
 
 This is an rtc.io signaller that makes use of the excellent realtime
 abstraction library, [primus](https://github.com/primus/primus).
 
 
-[![NPM](https://nodei.co/npm/rtc-signaller-primus.png)](https://nodei.co/npm/rtc-signaller-primus/)
+[![NPM](https://nodei.co/npm/rtc-switchboard.png)](https://nodei.co/npm/rtc-switchboard/)
 
-[![Build Status](https://travis-ci.org/rtc-io/rtc-signaller-primus.png?branch=master)](https://travis-ci.org/rtc-io/rtc-signaller-primus)
+[![Build Status](https://travis-ci.org/rtc-io/rtc-switchboard.png?branch=master)](https://travis-ci.org/rtc-io/rtc-switchboard)
 [![unstable](http://hughsk.github.io/stability-badges/dist/unstable.svg)](http://github.com/hughsk/stability-badges)
 
 ## Usage
@@ -16,7 +16,7 @@ examples:
 
 ```js
 var server = require('http').createServer();
-var signaller = require('rtc-signaller-primus')(server);
+var signaller = require('rtc-switchboard')(server);
 var port = parseInt(process.env.SERVER_PORT || process.argv[2], 10) || 3000;
 
 // start the server
@@ -45,12 +45,18 @@ var server = require('http').createServer();
 var Primus = require('primus');
 
 // create the signaller, providing our own primus instance (using engine.io)
-var signaller = require('rtc-signaller-primus')(server, {
+var signaller = require('rtc-switchboard')(server, {
   primus: new Primus(server, { transformer: 'engine.io' })
 });
 
 // start the server
 server.listen(3000);
+```
+
+You can also provide different command handlers via opts also:
+
+```
+ERROR: could not find: 
 ```
 
 ## Custom Message Handlers

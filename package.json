@@ -1,5 +1,5 @@
 {
-  "name": "rtc-signaller-primus",
+  "name": "rtc-switchboard",
   "version": "0.1.0",
   "description": "Signalling for rtc-io components using primus",
   "main": "index.js",
@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/rtc-io/rtc-signaller-primus.git"
+    "url": "https://github.com/rtc-io/rtc-switchboard.git"
   },
   "keywords": [
     "rtc.io",
@@ -20,14 +20,14 @@
   "author": "Damon Oehlman <damon.oehlman@nicta.com.au>",
   "license": "Apache 2.0",
   "bugs": {
-    "url": "https://github.com/rtc-io/rtc-signaller-primus/issues"
+    "url": "https://github.com/rtc-io/rtc-switchboard/issues"
   },
   "dependencies": {
     "primus": "~1.4.4",
     "ws": "~0.4.31",
     "debug": "~0.7.2",
-    "rtc-signaller": "rtc-io/rtc-signaller#0.4",
-    "through": "~2.3.4"
+    "through": "~2.3.4",
+    "rtc": "~0.5.7"
   },
   "devDependencies": {
     "engine.io": "~0.7.9"
