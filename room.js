@@ -1,6 +1,8 @@
 /* jshint node: true */
 'use strict';
 
+var debug = require('debug')('rtc-signaller-room');
+
 function Room(name) {
   if (! (this instanceof Room)) {
     return new Room(name);
@@ -20,8 +22,11 @@ Room.prototype.leave = function(spark) {
   }
 };
 
-Room.prototype.write = function(message) {
+Room.prototype.write = function(message, source) {
   this.sparks.forEach(function(spark) {
-    spark.write(message);
+    if (spark !== source) {
+      debug('writing message to spark: ' + spark.peerId, message);
+      spark.write(message);
+    }
   });
 };

@@ -56,7 +56,7 @@ ConnectionManager.prototype.connect = function(spark) {
 
     // if we have a handler, the invoke
     if (typeof handler == 'function') {
-      preventBroadcast = handler(mgr, spark, data);
+      preventBroadcast = !!handler(mgr, spark, data);
     }
 
     debug('got message: ' + data, preventBroadcast);
@@ -64,12 +64,17 @@ ConnectionManager.prototype.connect = function(spark) {
     // if the message has not been handled, then
     // otherwise, just broadcast
     if (! preventBroadcast) {
-      spark.scope.write(data);
+      spark.scope.write(data, spark);
     }
   }
 
   function end() {
     debug('spark ended, disconnecting');
+
+    // send a leave message to connected sparks
+    spark.scope.write('/leave|' + spark.peerId, spark);
+
+    // invoke the leave action if part of a room
     if (spark.scope && typeof spark.scope.leave == 'function') {
       spark.scope.leave(spark);
     }
