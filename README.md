@@ -83,6 +83,19 @@ Create a websocket client connection the underlying primus server.
 
 Join the room specified by `name`.
 
+### Room(name)
+
+This is a simple helper class for encapsulating room details.
+
+#### leave(spark)
+
+Remove the specified spark from the room
+
+#### write(message, source)
+
+Write `message` to all the sparks in the room, with the exception of the
+`source` spark.
+
 ## Custom Message Handlers
 
 The socket server is configured to handle some specific rtc.io signaller
