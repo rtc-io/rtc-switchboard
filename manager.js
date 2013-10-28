@@ -1,9 +1,11 @@
 /* jshint node: true */
 'use strict';
 
+var EventEmitter = require('events').EventEmitter;
 var debug = require('debug')('rtc-switchboard');
 var through = require('through');
 var Room = require('./room');
+var util = require('util');
 
 var baseHandlers = {
   announce: require('./handlers/announce')
@@ -15,6 +17,9 @@ function ConnectionManager(primus, opts) {
   if (! (this instanceof ConnectionManager)) {
     return new ConnectionManager();
   }
+
+  // inherited
+  EventEmitter.call(this);
 
   // save a reference to primus
   this.primus = primus;
@@ -33,6 +38,7 @@ function ConnectionManager(primus, opts) {
   });
 }
 
+util.inherits(ConnectionManager, EventEmitter);
 module.exports = ConnectionManager;
 
 ConnectionManager.prototype.connect = function(spark) {
@@ -43,23 +49,48 @@ ConnectionManager.prototype.connect = function(spark) {
   spark.scope = this.primus;
 
   function write(data) {
+    var command;
     var handler;
+    var payload = data;
     var preventBroadcast = false;
 
     // if we have string data then preprocess
     if (typeof data == 'string' || (data instanceof String)) {
       if (data.charAt(0) === '/') {
-        debug('received command: ' + data.slice(1, data.indexOf('|', 1)));
-        handler = handlers[data.slice(1, data.indexOf('|', 1))];
+        // initialise the command name
+        command = data.slice(1, data.indexOf('|', 1));
+
+        // get the payload
+        payload = data.slice(command.length + 2);
+
+        // try and parse the payload as JSON
+        try {
+          payload = JSON.parse(payload);
+        }
+        catch (e) {
+          // not json
+        }
       }
     }
+    // if we have an object, then primus is being helpful :)
+    else if (typeof data == 'object') {
+      command = data.command;
+    };
+
+    // check if we have a handler for the current command
+    handler = command && handlers[command];
 
     // if we have a handler, the invoke
     if (typeof handler == 'function') {
-      preventBroadcast = !!handler(mgr, spark, data);
+      preventBroadcast = !!handler(mgr, spark, data, payload);
     }
 
     debug('got message: ' + data, preventBroadcast);
+
+    // trigger a command event
+    if (command) {
+      mgr.emit(command, payload);
+    }
 
     // if the message has not been handled, then
     // otherwise, just broadcast
@@ -82,7 +113,17 @@ ConnectionManager.prototype.connect = function(spark) {
     }
   }
 
+  debug('spark connecting');
   return through(write, end);
+};
+
+/**
+  #### createSocket(url)
+
+  Create a websocket client connection the underlying primus server.
+**/
+ConnectionManager.prototype.createSocket = function(url) {
+  return new this.primus.Socket(url);
 };
 
 ConnectionManager.prototype.joinRoom = function(name, spark) {

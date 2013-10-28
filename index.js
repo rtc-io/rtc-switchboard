@@ -1,7 +1,7 @@
 /* jshint node: true */
 'use strict';
 
-var debug = require('debug')('rtc-signaller-primus');
+var debug = require('debug')('rtc-switchboard');
 var Primus = require('primus');
 var ConnectionManager = require('./manager');
 
@@ -48,6 +48,7 @@ module.exports = function(server, opts) {
 
   // inject a primus request handler
   server.on('request', function(req, res) {
+    debug('received request for: ' + req.url);
     if (req.url !== '/rtc.io/primus.js') {
       return;
     }
@@ -63,5 +64,5 @@ module.exports = function(server, opts) {
     spark.pipe(manager.connect(spark));
   });
 
-  return primus;
+  return manager;
 };

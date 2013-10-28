@@ -11,17 +11,7 @@
   `/to` messages are received.
 
 **/
-module.exports = function(mgr, spark, data) {
-  var payload = data.slice(data.indexOf('|') + 1);
-
-  try {
-    payload = JSON.parse(payload);
-  }
-  catch (e) {
-    // invalid payload, prevent broadcast
-    return true;
-  }
-
+module.exports = function(mgr, spark, data, payload) {
   // attach the peer id to the socket
   spark.peerId = payload.id;
 

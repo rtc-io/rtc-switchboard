@@ -30,7 +30,7 @@
     "rtc": "~0.5.7"
   },
   "devDependencies": {
-    "engine.io": "~0.7.9",
-    "tape": "~2.1.0"
+    "tape": "~2.1.0",
+    "rtc-signaller": "~0.3.3"
   }
 }
