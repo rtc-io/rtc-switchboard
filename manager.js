@@ -74,7 +74,7 @@ ConnectionManager.prototype.connect = function(spark) {
           parts = payload.split('|');
 
           // write the data out to the target spark
-          return write(parts.slice(1), mgr.sparks[parts[0]]);
+          return write(parts.slice(1).join('|'), mgr.sparks[parts[0]]);
         }
 
         // try and parse the payload as JSON

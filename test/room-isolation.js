@@ -1,5 +1,6 @@
 var server = require('./helpers/server');
 var connect = require('./helpers/connect');
+var cleanup = require('./helpers/cleanup');
 var uuid = require('uuid');
 
 var start = module.exports = function(test, board) {
@@ -85,17 +86,7 @@ var start = module.exports = function(test, board) {
     clients[0].leave();
   });
 
-  test('close connections', function(t) {
-    t.plan(clients.length);
-
-    board.on('leave', function() {
-      t.pass('captured leave');
-    });
-
-    clients.forEach(function(client) {
-      client.leave();
-    });
-  });
+  test('close connections', cleanup(board, clients));
 };
 
 if (! module.parent) {
