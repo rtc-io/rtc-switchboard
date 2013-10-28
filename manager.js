@@ -85,7 +85,7 @@ ConnectionManager.prototype.connect = function(spark) {
       preventBroadcast = !!handler(mgr, spark, data, payload);
     }
 
-    debug('got message: ' + data, preventBroadcast);
+    debug('got message: ' + data + ', command: ' + command + ', prevent broadcast: ' + preventBroadcast);
 
     // trigger a command event
     if (command) {
