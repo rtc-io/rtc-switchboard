@@ -26,7 +26,8 @@
     "primus": "~1.4.4",
     "ws": "~0.4.31",
     "debug": "~0.7.2",
-    "rtc-signaller": "rtc-io/rtc-signaller#0.4"
+    "rtc-signaller": "rtc-io/rtc-signaller#0.4",
+    "through": "~2.3.4"
   },
   "devDependencies": {
     "engine.io": "~0.7.9"

@@ -4,10 +4,7 @@
 var debug = require('debug')('rtc-signaller-primus');
 var Primus = require('primus');
 var parser = require('rtc-signaller/parser');
-
-var baseHandlers = {
-  announce: require('./handlers/announce')
-}
+var ConnectionManager = require('./manager');
 
 /**
   # rtc-signaller-primus
@@ -16,7 +13,7 @@ var baseHandlers = {
   abstraction library, [primus](https://github.com/primus/primus).
 
   ## Usage
-  
+
   To create an application using primus signalling, see the following
   examples:
 
@@ -47,12 +44,15 @@ module.exports = function(server, opts) {
   // create the primus instance
   var primus = (opts || {}).primus || new Primus(server, opts);
 
+  // create the connection manager
+  var manager = new ConnectionManager(primus, opts);
+
   // inject a primus request handler
   server.on('request', function(req, res) {
     if (req.url !== '/rtc.io/primus.js') {
       return;
     }
-      
+
     res.writeHead(200, {
       'content-type': 'application/javascript'
     });
@@ -61,66 +61,8 @@ module.exports = function(server, opts) {
   });
 
   primus.on('connection', function(spark) {
-    console.log('spark connected');
-
-    spark.on('data', function(data) {
-      console.log(parser(data));
-    });
-
-    spark.on('end', function() {
-      console.log('spark disconnected');
-    });
+    spark.pipe(manager.connect(spark));
   });
 
-  // // add any additional handlers
-  // var handlers = (opts || {}).handlers || {};
-
-  // // add the base handlers if not specifically defined
-  // Object.keys(baseHandlers).forEach(function(name) {
-  //   if (! handlers[name]) {
-  //     handlers[name] = baseHandlers[name];
-  //   }
-  // });
-
-  // return function(socket) {
-
-  //   function handleMessage(data) {
-  //     var handler;
-  //     var preventBroadcast = false;
-
-  //     // if we have string data then preprocess
-  //     if (typeof data == 'string' || (data instanceof String)) {
-  //       if (data.charAt(0) === '/') {
-  //         debug('received command: ' + data.slice(1, data.indexOf('|', 1)));
-  //         handler = handlers[data.slice(1, data.indexOf('|', 1))];
-  //       }
-  //     }
-
-  //     // if we have a handler, the invoke
-  //     if (typeof handler == 'function') {
-  //       preventBroadcast = handler(io, socket, data);
-  //     }
-
-  //     debug('got message: ' + data, preventBroadcast);
-
-  //     // if the message has not been handled, then 
-  //     // otherwise, just broadcast
-  //     if (! preventBroadcast) {
-  //       socket.broadcast.send(data);
-  //     }
-  //   }
-
-  //   function handleDisconnect() {
-  //     debug('socket disconnect, peer id: ' + socket.peerId);
-
-  //     if (socket.peerId) {
-  //       io.sockets.send('/leave|' + socket.peerId);
-  //     }
-  //   }
-
-  //   socket.on('message', handleMessage);
-  //   socket.on('disconnect', handleDisconnect);
-  // };
-
   return primus;
-}; 
+};

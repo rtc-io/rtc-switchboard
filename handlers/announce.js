@@ -9,9 +9,9 @@
 
   This will allow routing of messages to the correct receipient when
   `/to` messages are received.
-  
+
 **/
-module.exports = function(io, socket, data) {
+module.exports = function(mgr, spark, data) {
   var payload = data.slice(data.indexOf('|') + 1);
 
   try {
@@ -23,5 +23,10 @@ module.exports = function(io, socket, data) {
   }
 
   // attach the peer id to the socket
-  socket.peerId = payload.id;
+  spark.peerId = payload.id;
+
+  // if we have a room, then get the spark to join the room
+  if (payload.room) {
+    spark.scope = mgr.joinRoom(payload.room, spark);
+  }
 };
