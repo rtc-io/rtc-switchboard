@@ -2,7 +2,7 @@ var server = require('./helpers/server');
 var connect = require('./helpers/connect');
 var uuid = require('uuid');
 
-server.start(function(test, board) {
+var start = module.exports = function(test, board) {
   var clients = [];
   var roomId = uuid.v4();
 
@@ -85,4 +85,8 @@ server.start(function(test, board) {
       client.leave();
     });
   });
-});
+};
+
+if (! module.parent) {
+  server.start(start);
+}

@@ -1,7 +1,7 @@
 var server = require('./helpers/server');
 var signaller = require('rtc-signaller');
 
-server.start(function(test, board) {
+var start = module.exports = function(test, board) {
   var socket;
 
   test('create a socket', function(t) {
@@ -38,4 +38,8 @@ server.start(function(test, board) {
     socket.end();
     t.pass('closed');
   });
-});
+};
+
+if (! module.parent) {
+  server.start(start);
+}
