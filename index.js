@@ -3,7 +3,6 @@
 
 var debug = require('debug')('rtc-signaller-primus');
 var Primus = require('primus');
-var parser = require('rtc-signaller/parser');
 var ConnectionManager = require('./manager');
 
 /**
@@ -24,9 +23,9 @@ var ConnectionManager = require('./manager');
 **/
 
 /**
-  ### signaller(server, opts?)
+  ### switchboard(server, opts?)
 
-  Create the signaller that will work with primus.  By default calling
+  Create the switchboard which uses primus under the hood. By default calling
   this function will create a new `Primus` instance and use the
   pure [websockets adapter](https://github.com/primus/primus#websockets).
 

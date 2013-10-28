@@ -31,9 +31,9 @@ server.listen(port, function(err) {
 
 ## Reference
 
-### signaller(server, opts?)
+### switchboard(server, opts?)
 
-Create the signaller that will work with primus.  By default calling
+Create the switchboard which uses primus under the hood. By default calling
 this function will create a new `Primus` instance and use the
 pure [websockets adapter](https://github.com/primus/primus#websockets).
 
