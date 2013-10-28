@@ -12,6 +12,17 @@ var baseHandlers = {
   announce: require('./handlers/announce')
 };
 
+/**
+  ### ConnectionManager(primus, opts)
+
+  The `ConnectionManager` is used to route messages from one peer to another.
+  When a peer announces itself to the signalling server, if it has specified
+  a room, then general messages will only be routed to other peers in the
+  same room.
+
+  An exeption to this case is `/to` messages which are routed directly to
+  the specified peer.
+**/
 function ConnectionManager(primus, opts) {
   var handlers;
 
@@ -45,6 +56,13 @@ function ConnectionManager(primus, opts) {
 util.inherits(ConnectionManager, EventEmitter);
 module.exports = ConnectionManager;
 
+/**
+  #### connect(spark)
+
+  Return a [through](https://github.com/dominictarr/through) stream for the
+  spark that we can pipe the incoming data from the spark into to be handled
+  correctly.
+**/
 ConnectionManager.prototype.connect = function(spark) {
   var handlers = this.handlers;
   var mgr = this;
@@ -148,6 +166,11 @@ ConnectionManager.prototype.createSocket = function(url) {
   return new this.primus.Socket(url);
 };
 
+/**
+  #### joinRoom(name, spark)
+
+  Join the room specified by `name`.
+**/
 ConnectionManager.prototype.joinRoom = function(name, spark) {
   var room = this.rooms[name];
 
