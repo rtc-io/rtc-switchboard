@@ -3,7 +3,7 @@
 
 var EventEmitter = require('events').EventEmitter;
 var debug = require('debug')('rtc-switchboard');
-var FastSet = require('collections/fast-set');
+var FastMap = require('collections/fast-map');
 var through = require('through');
 var Room = require('./room');
 var util = require('util');
@@ -40,7 +40,7 @@ function ConnectionManager(primus, opts) {
   this.rooms = {};
 
   // initialise the peer lookups
-  this.sparks = new FastSet();
+  this.sparks = new FastMap();
 
   // initialise the handlers
   handlers = this.handlers = (opts || {}).handlers || {};
@@ -51,6 +51,9 @@ function ConnectionManager(primus, opts) {
       handlers[name] = baseHandlers[name];
     }
   });
+
+  // when peers are leaving, ensure cleanup
+  this.on('leave', this._cleanupPeer.bind(this));
 }
 
 util.inherits(ConnectionManager, EventEmitter);
@@ -92,7 +95,7 @@ ConnectionManager.prototype.connect = function(spark) {
           parts = payload.split('|');
 
           // write the data out to the target spark
-          return write(parts.slice(1).join('|'), mgr.sparks[parts[0]]);
+          return write(parts.slice(1).join('|'), mgr.sparks.get(parts[0]));
         }
 
         // try and parse the payload as JSON
@@ -141,15 +144,15 @@ ConnectionManager.prototype.connect = function(spark) {
   function end() {
     debug('spark ended, disconnecting');
 
+    // invoke the leave action if part of a room
+    if (spark.scope && typeof spark.scope.leave == 'function') {
+      spark.scope.leave(spark);
+    }
+
     // send a leave message to connected sparks
     if (spark.peerId) {
       mgr.sparks.delete(spark.peerId);
       spark.scope.write('/leave|' + spark.peerId, spark);
-    }
-
-    // invoke the leave action if part of a room
-    if (spark.scope && typeof spark.scope.leave == 'function') {
-      spark.scope.leave(spark);
     }
   }
 
@@ -179,9 +182,26 @@ ConnectionManager.prototype.joinRoom = function(name, spark) {
     room = this.rooms[name] = new Room(name);
   }
 
+  // flag the spark as belonging to a particular room
+  spark._room = name;
+
   // add the current spark to the room
   room.sparks.push(spark);
 
   // return the room
   return room;
+};
+
+/**
+  #### _cleanupPeer(data)
+
+  Cleanup a peer when we receive a leave notification.
+**/
+ConnectionManager.prototype._cleanupPeer = function(data) {
+  var spark = data && data.id && this.sparks.get(data.id);
+
+  // if we have the spark, look at removing it from the room
+  if (spark && spark.scope && typeof spark.scope.leave === 'function') {
+    spark.scope.leave(spark);
+  }
 };

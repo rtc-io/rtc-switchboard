@@ -16,7 +16,7 @@ module.exports = function(mgr, spark, data, payload) {
   spark.peerId = payload.id;
 
   // create a lookup from the peer id to the spark id
-  mgr.sparks[spark.peerId] = spark;
+  mgr.sparks.set(spark.peerId, spark);
 
   // if we have a room, then get the spark to join the room
   if (payload.room) {
