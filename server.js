@@ -1,5 +1,5 @@
 var server = require('http').createServer();
-var signaller = require('./')(server);
+var switchboard = require('./')(server, { servelib: true });
 var port = parseInt(process.env.SERVER_PORT || process.argv[2], 10) || 3000;
 
 // start the server

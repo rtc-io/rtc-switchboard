@@ -45,20 +45,15 @@ module.exports = function(server, opts) {
 
   // create the connection manager
   var manager = new ConnectionManager(primus, opts);
+  var library = manager.library();
 
-  // inject a primus request handler
-  server.on('request', function(req, res) {
-    debug('received request for: ' + req.url);
-    if (req.url !== '/rtc.io/primus.js') {
-      return;
-    }
-
-    res.writeHead(200, {
-      'content-type': 'application/javascript'
+  if (opts && opts.servelib) {
+    server.on('request', function(req, res) {
+      if (req.url === '/rtc.io/primus.js') {
+        library(req, res);
+      }
     });
-
-    res.end(primus.library());
-  });
+  }
 
   primus.on('connection', function(spark) {
     spark.pipe(manager.connect(spark));

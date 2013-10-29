@@ -206,6 +206,23 @@ ConnectionManager.prototype.joinRoom = function(name, spark) {
 };
 
 /**
+  #### library(req, res)
+
+  Write the library to the response
+**/
+ConnectionManager.prototype.library = function() {
+  var content = this.primus.library();
+
+  return function(req, res) {
+    res.writeHead(200, {
+      'content-type': 'application/javascript'
+    });
+
+    res.end(content);
+  };
+};
+
+/**
   #### _cleanupPeer(data)
 
   Cleanup a peer when we receive a leave notification.

@@ -16,7 +16,7 @@ examples:
 
 ```js
 var server = require('http').createServer();
-var signaller = require('rtc-switchboard')(server);
+var switchboard = require('rtc-switchboard')(server, { servelib: true });
 var port = parseInt(process.env.SERVER_PORT || process.argv[2], 10) || 3000;
 
 // start the server
@@ -82,6 +82,14 @@ Create a websocket client connection the underlying primus server.
 #### joinRoom(name, spark)
 
 Join the room specified by `name`.
+
+#### library(req, res)
+
+Write the library to the response
+
+#### _cleanupPeer(data)
+
+Cleanup a peer when we receive a leave notification.
 
 ### Room(name)
 
