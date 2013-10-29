@@ -175,11 +175,24 @@ ConnectionManager.prototype.createSocket = function(url) {
   Join the room specified by `name`.
 **/
 ConnectionManager.prototype.joinRoom = function(name, spark) {
-  var room = this.rooms[name];
+  var room;
+
+  // if the spark already belongs to the room, then do nothing
+  if (spark && spark._room === name) {
+    return this.rooms[name];
+  }
+
+  // get the room
+  room = this.rooms[name];
 
   // if we don't have a room, then create one
   if (! room) {
     room = this.rooms[name] = new Room(name);
+  }
+
+  // if the spark already has a room, then leave the room
+  if (spark && spark._room && this.rooms[spark._room]) {
+    this.rooms[spark._room].leave(spark);
   }
 
   // flag the spark as belonging to a particular room

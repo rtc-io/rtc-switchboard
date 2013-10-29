@@ -7,6 +7,7 @@ var uuid = require('uuid');
 var start = module.exports = function(test, board) {
   var clients = [];
   var roomId = uuid.v4();
+  var room2 = uuid.v4();
 
   test('connect 0', connect(board, clients, 0));
   test('connect 1', connect(board, clients, 1));
@@ -18,6 +19,20 @@ var start = module.exports = function(test, board) {
     t.plan(2);
     t.ok(board.rooms[roomId], 'have room');
     t.equal(board.rooms[roomId].sparks.length, 2);
+  });
+
+  test('announce 1 in new room', announce(board, clients, 1, { room: room2 }));
+
+  test('check 1 member in original room', function(t) {
+    t.plan(2);
+    t.ok(board.rooms[roomId], 'have room');
+    t.equal(board.rooms[roomId].sparks.length, 1);
+  });
+
+  test('check 1 member in new room', function(t) {
+    t.plan(2);
+    t.ok(board.rooms[room2], 'have room');
+    t.equal(board.rooms[room2].sparks.length, 1);
   });
 
   test('close connections', cleanup(board, clients));

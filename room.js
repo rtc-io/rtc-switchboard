@@ -40,6 +40,7 @@ Room.prototype.leave = function(spark) {
   `source` spark.
 **/
 Room.prototype.write = function(message, source) {
+  debug('writing message to ' + (this.sparks.length - 1) + ' sparks');
   this.sparks.forEach(function(spark) {
     if (spark !== source) {
       debug('writing message to spark: ' + spark.peerId, message);
