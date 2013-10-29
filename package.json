@@ -1,6 +1,6 @@
 {
   "name": "rtc-switchboard",
-  "version": "0.1.5",
+  "version": "0.2.0",
   "description": "Signalling for rtc-io components using primus",
   "main": "index.js",
   "scripts": {
