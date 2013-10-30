@@ -33,6 +33,7 @@
   "devDependencies": {
     "tape": "~2.1.0",
     "rtc-signaller": "~0.4.0",
-    "uuid": "~1.4.1"
+    "uuid": "~1.4.1",
+    "express": "~3.4.4"
   }
 }

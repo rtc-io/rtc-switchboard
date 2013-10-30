@@ -9,10 +9,32 @@ abstraction library, [primus](https://github.com/primus/primus).
 [![Build Status](https://travis-ci.org/rtc-io/rtc-switchboard.png?branch=master)](https://travis-ci.org/rtc-io/rtc-switchboard)
 [![unstable](http://hughsk.github.io/stability-badges/dist/unstable.svg)](http://github.com/hughsk/stability-badges)
 
-## Usage
+## Usage: Standalone
+
+If you wish to use `rtc-switchboard` on it's own to test signalling,
+then you can simply clone this repository, install dependencies and start
+the server:
+
+```
+git clone https://github.com/rtc-io/rtc-switchboard.git
+cd rtc-switchboard
+npm install
+node server.js
+```
+
+If you wish to run the server on a specific port, then set the `SERVER_PORT`
+environment variable prior to execution:
+
+```
+SERVER_PORT=8997 node server.js
+```
+
+## Usage: API
 
 To create an application using primus signalling, see the following
 examples:
+
+### Pure Node HTTP
 
 ```js
 var server = require('http').createServer();
@@ -28,6 +50,48 @@ server.listen(port, function(err) {
   console.log('server running on port: ' + port);
 });
 ```
+
+### Using Express
+
+```js
+var express = require('express');
+var app = express();
+var server = require('http').Server(app);
+var port = process.env.PORT || 3000;
+
+// create the switchboard
+var switchboard = require('rtc-switchboard')(server);
+
+// we need to expose the primus library
+app.get('/rtc.io/primus.js', switchboard.library());
+
+server.listen(port, function(err) {
+  if (err) {
+    return;
+  }
+
+  console.log('server listening on port: ' + port);
+});
+```
+
+## Including the Primus Client
+
+The `rtc-switchboard` makes use of the slick WebSockets abstraction library
+[Primus](https://github.com/primus/primus). To work with the server, you
+will need to include the `primus.js` library in your application prior to
+attempting a websocket connection.
+
+If you are working with a local standalone server, the following script
+tag will likely do the job:
+
+```html
+<script src="http://localhost:3000/rtc.io/primus.js"></script>
+```
+
+__NOTE:__ A specific call to include primus is not required if you are
+working with particular rtc.io library (such as
+[rtc-glue](https://github.com/rtc-io/rtc-glue)), as they will ensure the
+primus library has been included prior to running their internal code.
 
 ## Reference
 
