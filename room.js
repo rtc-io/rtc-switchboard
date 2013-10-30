@@ -40,6 +40,10 @@ Room.prototype.leave = function(spark) {
   `source` spark.
 **/
 Room.prototype.write = function(message, source) {
+  if (this.sparks.length === 0) {
+    return debug('no sparks in room, aborting message write');
+  }
+
   debug('writing message to ' + (this.sparks.length - 1) + ' sparks');
   this.sparks.forEach(function(spark) {
     if (spark !== source) {

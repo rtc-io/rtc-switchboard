@@ -72,6 +72,7 @@ ConnectionManager.prototype.connect = function(spark) {
 
   // initialise the spark scope to primus
   spark.scope = this.primus;
+  debug('new connection: ' + spark.id);
 
   function write(data, target) {
     var command;
@@ -133,6 +134,7 @@ ConnectionManager.prototype.connect = function(spark) {
       target.write(data);
     }
     else {
+      debug('writing data to spark scope: ', data);
       spark.scope.write(data, spark);
     }
   }
