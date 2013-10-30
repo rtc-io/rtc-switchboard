@@ -107,10 +107,6 @@ ConnectionManager.prototype.connect = function(spark) {
         }
       }
     }
-    // TODO: handle non-string data
-    else {
-      return;
-    }
 
     // check if we have a handler for the current command
     handler = command && handlers[command];
