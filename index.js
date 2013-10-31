@@ -63,6 +63,21 @@ var ConnectionManager = require('./manager');
   [rtc-glue](https://github.com/rtc-io/rtc-glue)), as they will ensure the
   primus library has been included prior to running their internal code.
 
+  ## Writing Custom Command Handlers
+
+  When you initialize the switchboard, you are able to provide custom handlers
+  for specific commands that you want handled by the switchboard. Imagine
+  for instance, that we want our switchboard to do something clever when a
+  client sends an `/img` command.
+
+  We would create our server to include the custom `img` command handler:
+
+  <<< examples/custom-handlers.js
+
+  And then we would write a small module for the handler:
+
+  <<< examples/handlers/img.js
+
   ## Reference
 
 **/
@@ -73,15 +88,6 @@ var ConnectionManager = require('./manager');
   Create the switchboard which uses primus under the hood. By default calling
   this function will create a new `Primus` instance and use the
   pure [websockets adapter](https://github.com/primus/primus#websockets).
-
-  That behaviour can be overriden, however, by providing a prepared primus
-  instance in `opts.primus`, e.g:
-
-  <<< examples/override-primus.js
-
-  You can also provide different command handlers via opts also:
-
-  <<< examples/additional-handlers.js
 
 **/
 module.exports = function(server, opts) {

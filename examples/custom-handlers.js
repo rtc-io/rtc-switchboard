@@ -3,7 +3,10 @@ var Primus = require('primus');
 
 // create the signaller, providing our own primus instance (using engine.io)
 var switchboard = require('../')(server, {
-  primus: new Primus(server, { transformer: 'engine.io' })
+  servelib: true,
+  handlers: {
+    img: require('./handlers/img')
+  }
 });
 
 // start the server

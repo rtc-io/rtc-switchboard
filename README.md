@@ -39,7 +39,7 @@ examples:
 ```js
 var server = require('http').createServer();
 var switchboard = require('rtc-switchboard')(server, { servelib: true });
-var port = parseInt(process.env.SERVER_PORT || process.argv[2], 10) || 3000;
+var port = parseInt(process.env.NODE_PORT || process.argv[2], 10) || 3000;
 
 // start the server
 server.listen(port, function(err) {
@@ -93,6 +93,39 @@ working with particular rtc.io library (such as
 [rtc-glue](https://github.com/rtc-io/rtc-glue)), as they will ensure the
 primus library has been included prior to running their internal code.
 
+## Writing Custom Command Handlers
+
+When you initialize the switchboard, you are able to provide custom handlers
+for specific commands that you want handled by the switchboard. Imagine
+for instance, that we want our switchboard to do something clever when a
+client sends an `/img` command.
+
+We would create our server to include the custom `img` command handler:
+
+```js
+var server = require('http').createServer();
+var Primus = require('primus');
+
+// create the signaller, providing our own primus instance (using engine.io)
+var switchboard = require('rtc-switchboard')(server, {
+  servelib: true,
+  handlers: {
+    img: require('rtc-switchboard/handlers/img')
+  }
+});
+
+// start the server
+server.listen(3000);
+```
+
+And then we would write a small module for the handler:
+
+```js
+module.exports = function(mgr, spark, data, payload) {
+  console.log('received an img command with payload: ', payload);
+};
+```
+
 ## Reference
 
 ### switchboard(server, opts?)
@@ -100,28 +133,6 @@ primus library has been included prior to running their internal code.
 Create the switchboard which uses primus under the hood. By default calling
 this function will create a new `Primus` instance and use the
 pure [websockets adapter](https://github.com/primus/primus#websockets).
-
-That behaviour can be overriden, however, by providing a prepared primus
-instance in `opts.primus`, e.g:
-
-```js
-var server = require('http').createServer();
-var Primus = require('primus');
-
-// create the signaller, providing our own primus instance (using engine.io)
-var signaller = require('rtc-switchboard')(server, {
-  primus: new Primus(server, { transformer: 'engine.io' })
-});
-
-// start the server
-server.listen(3000);
-```
-
-You can also provide different command handlers via opts also:
-
-```
-ERROR: could not find: 
-```
 
 ### ConnectionManager(primus, opts)
 
