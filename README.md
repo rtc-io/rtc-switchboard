@@ -38,7 +38,7 @@ examples:
 
 ```js
 var server = require('http').createServer();
-var switchboard = require('rtc-switchboard')(server, { servelib: true });
+var switchboard = require('./')(server, { servelib: true });
 var port = parseInt(process.env.NODE_PORT || process.argv[2], 10) || 3000;
 
 // start the server
@@ -110,7 +110,7 @@ var Primus = require('primus');
 var switchboard = require('rtc-switchboard')(server, {
   servelib: true,
   handlers: {
-    img: require('rtc-switchboard/handlers/img')
+    img: require('./handlers/img')
   }
 });
 
