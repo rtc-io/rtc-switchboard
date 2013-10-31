@@ -27,7 +27,6 @@
     "ws": "~0.4.31",
     "debug": "~0.7.2",
     "through": "~2.3.4",
-    "rtc": "~0.5.7",
     "collections": "~0.2.1"
   },
   "devDependencies": {
