@@ -1,6 +1,6 @@
 var server = require('http').createServer();
 var switchboard = require('./')(server, { servelib: true });
-var port = parseInt(process.env.SERVER_PORT || process.argv[2], 10) || 3000;
+var port = parseInt(process.env.NODE_PORT || process.argv[2], 10) || 3000;
 
 // start the server
 server.listen(port, function(err) {
