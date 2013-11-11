@@ -77,6 +77,7 @@ ConnectionManager.prototype.connect = function(spark) {
   function write(data, target) {
     var command;
     var handler;
+    var attemptParse = true;
     var payload = data;
     var preventSend = false;
     var parts;
@@ -90,21 +91,29 @@ ConnectionManager.prototype.connect = function(spark) {
         // get the payload
         payload = data.slice(command.length + 2);
 
-        // if we have a to command, then handle
+        // if we have a to command, and no designated target
         if (command === 'to') {
           // get the target id
           parts = payload.split('|');
 
-          // write the data out to the target spark
-          return write(parts.slice(1).join('|'), mgr.sparks.get(parts[0]));
+          // get the target
+          target = mgr.sparks.get(parts[0]);
+          attemptParse = false;
+
+          // if the target is unknown, refuse to send
+          if (! target) {
+            return false;
+          }
         }
 
-        // try and parse the payload as JSON
-        try {
-          payload = JSON.parse(payload);
-        }
-        catch (e) {
-          // not json
+        if (attemptParse) {
+          // try and parse the payload as JSON
+          try {
+            payload = JSON.parse(payload);
+          }
+          catch (e) {
+            // not json
+          }
         }
       }
     }
@@ -126,7 +135,7 @@ ConnectionManager.prototype.connect = function(spark) {
 
     // if we are preventing send, then return
     if (preventSend) {
-      return;
+      return false;
     }
 
     if (target) {
