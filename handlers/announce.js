@@ -12,11 +12,14 @@
 
 **/
 module.exports = function(mgr, spark, data, payload) {
-  // attach the peer id to the socket
-  spark.peerId = payload.id;
+  var peerId = payload.id;
+
+  // add the peer id to the list of peers known to this spark
+  spark.peers = spark.peers || [];
+  spark.peers.push(peerId);
 
   // create a lookup from the peer id to the spark id
-  mgr.sparks.set(spark.peerId, spark);
+  mgr.sparks.set(peerId, spark);
 
   // if we have a room, then get the spark to join the room
   if (payload.room) {

@@ -77,6 +77,7 @@ ConnectionManager.prototype.connect = function(spark) {
   function write(data, target) {
     var command;
     var handler;
+    var targetId;
     var attemptParse = true;
     var payload = data;
     var preventSend = false;
@@ -97,7 +98,8 @@ ConnectionManager.prototype.connect = function(spark) {
           parts = payload.split('|');
 
           // get the target
-          target = mgr.sparks.get(parts[0]);
+          targetId = parts[0];
+          target = mgr.sparks.get(targetId);
           attemptParse = false;
 
           // if the target is unknown, refuse to send
@@ -139,7 +141,7 @@ ConnectionManager.prototype.connect = function(spark) {
     }
 
     if (target) {
-      debug('/to ' + target.peerId + ', data: ' + data);
+      debug('/to ' + targetId + ', data: ' + data);
       target.write(data);
     }
     else {
@@ -154,12 +156,6 @@ ConnectionManager.prototype.connect = function(spark) {
     // invoke the leave action if part of a room
     if (spark.scope && typeof spark.scope.leave == 'function') {
       spark.scope.leave(spark);
-    }
-
-    // send a leave message to connected sparks
-    if (spark.peerId) {
-      mgr.sparks.delete(spark.peerId);
-      spark.scope.write('/leave|' + spark.peerId, spark);
     }
   }
 
