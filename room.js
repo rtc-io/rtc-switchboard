@@ -27,8 +27,14 @@ module.exports = Room;
 **/
 Room.prototype.leave = function(spark) {
   var idx = this.sparks.indexOf(spark);
+  var room = this;
 
   if (idx >= 0) {
+    // send a leave message to all the other peers
+    (spark.peers || []).forEach(function(peerId) {
+      room.write('/leave|' + JSON.stringify({ id: peerId }), spark);
+    });
+
     this.sparks.splice(idx, 1);
   }
 };
@@ -47,7 +53,7 @@ Room.prototype.write = function(message, source) {
   debug('writing message to ' + (this.sparks.length - 1) + ' sparks');
   this.sparks.forEach(function(spark) {
     if (spark !== source) {
-      debug('writing message to spark: ' + spark.peerId, message);
+      debug('writing message to spark: ', message);
       spark.write(message);
     }
   });
