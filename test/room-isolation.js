@@ -30,7 +30,7 @@ var start = module.exports = function(test, board) {
     }
 
     t.plan(4);
-    clients[0].once('announce', checkData);
+    clients[0].once('peer:announce', checkData);
     board.once('announce', checkData);
 
     clients[1].announce({ room: roomId });
@@ -50,12 +50,12 @@ var start = module.exports = function(test, board) {
       t.equal(data.room, newRoomId);
     });
 
-    clients[0].once('announce', failTest);
-    clients[1].once('announce', failTest);
+    clients[0].once('peer:announce', failTest);
+    clients[1].once('peer:announce', failTest);
 
     setTimeout(function() {
-      clients[0].removeListener('announce', failTest);
-      clients[1].removeListener('announce', failTest);
+      clients[0].removeListener('peer:announce', failTest);
+      clients[1].removeListener('peer:announce', failTest);
 
       t.pass('did not trigger an event for clients in original room');
     }, 200);
@@ -70,13 +70,13 @@ var start = module.exports = function(test, board) {
       t.fail('captured announce message even though in a different room');
     }
 
-    clients[2].once('leave', failTest);
-    clients[1].once('leave', function(data) {
-      t.equal(data.id, clients[0].id);
+    clients[2].once('peer:leave', failTest);
+    clients[1].once('peer:leave', function(id) {
+      t.equal(id, clients[0].id);
     });
 
     setTimeout(function() {
-      clients[2].removeListener('leave', failTest);
+      clients[2].removeListener('peer:leave', failTest);
       t.pass('did not trigger an event for clients in original room');
 
       // splice out the 0 client

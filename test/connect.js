@@ -8,7 +8,7 @@ var start = module.exports = function(test, board) {
   test('create a socket', function(t) {
     t.plan(2);
     t.ok(socket = board.createSocket('http://localhost:3001'), 'socket created');
-    socket.on('open', t.pass.bind(t, 'opened'));
+    socket.once('open', t.pass.bind(t, 'opened'));
   });
 
   test('wrap a signaller around the socket', function(t) {
