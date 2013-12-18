@@ -13,6 +13,7 @@
 **/
 module.exports = function(mgr, spark, data, payload) {
   var peerId = payload.id;
+  var room;
 
   // add the peer id to the list of peers known to this spark
   spark.peers = spark.peers || [];
@@ -23,6 +24,12 @@ module.exports = function(mgr, spark, data, payload) {
 
   // if we have a room, then get the spark to join the room
   if (payload.room) {
-    spark.scope = mgr.joinRoom(payload.room, spark);
+    room = spark.scope = mgr.joinRoom(payload.room, spark);
+
+    // send the spark the room connection info
+    spark.write('/roominfo|' + JSON.stringify({
+      // send back the number of peers (including ourself)
+      memberCount: room.sparks.length
+    }));
   }
 };
