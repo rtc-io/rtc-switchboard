@@ -19,7 +19,7 @@ var start = module.exports = function(test, board) {
   test('send from 0 --> 1', function(t) {
     t.plan(1);
 
-    clients[1].on('hello', function(src, data) {
+    clients[1].on('hello', function(data) {
       t.equal(data.a, 1, 'got message');
     });
 
