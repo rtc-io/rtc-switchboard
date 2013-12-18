@@ -114,6 +114,7 @@ ConnectionManager.prototype.connect = function(spark) {
             payload = JSON.parse(payload);
           }
           catch (e) {
+            debug('error parsing json: ', payload);
             // not json
           }
         }

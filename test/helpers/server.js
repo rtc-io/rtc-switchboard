@@ -7,7 +7,10 @@ var switchboard = require('../../');
 function testClose() {
   test('close the server', function(t) {
     t.plan(1);
-    server.close();
+    server.close(function() {
+      console.log('closed');
+    });
+
     t.pass('server closed');
   });
 }
