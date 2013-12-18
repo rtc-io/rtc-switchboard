@@ -23,7 +23,9 @@ var start = module.exports = function(test, board) {
       t.equal(data.a, 1, 'got message');
     });
 
-    clients[0].to(clients[1].id).send('/hello', { a: 1 });
+    setTimeout(function() {
+      clients[0].to(clients[1].id).send('/hello', { a: 1 });
+    }, 200);
   });
 
   // test('send from 1 --> 2', function(t) {

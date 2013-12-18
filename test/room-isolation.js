@@ -36,6 +36,14 @@ var start = module.exports = function(test, board) {
     clients[1].announce({ room: roomId });
   });
 
+  test('check that peer 0 responds to peer 0', function(t) {
+    t.plan(2);
+    clients[1].once('peer:announce', function(data) {
+      t.equal(data.id, clients[0].id);
+      t.equal(data.room, roomId);
+    });
+  });
+
   test('announce 2 - in different room to 0 + 1', function(t) {
     var newRoomId = uuid.v4();
 
@@ -84,6 +92,7 @@ var start = module.exports = function(test, board) {
     }, 200);
 
     clients[0].leave();
+    clients[0].socket.end();
   });
 
   test('close connections', cleanup(board, clients));
