@@ -11,13 +11,14 @@
   `/to` messages are received.
 
 **/
-module.exports = function(mgr, spark, data, payload) {
+module.exports = function(mgr, spark, data, parts) {
+  // get the payload (which is the last part)
+  var payload = parts[parts.length - 1];
   var peerId = payload.id;
   var room;
 
-  // add the peer id to the list of peers known to this spark
-  spark.peers = spark.peers || [];
-  spark.peers.push(peerId);
+  // update the spark metadata
+  spark.metadata = payload;
 
   // create a lookup from the peer id to the spark id
   mgr.sparks.set(peerId, spark);

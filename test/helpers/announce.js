@@ -1,5 +1,3 @@
-var signaller = require('rtc-signaller');
-
 module.exports = function(board, clients, idx, data) {
   return function(t) {
     t.plan(1);

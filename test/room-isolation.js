@@ -91,7 +91,6 @@ var start = module.exports = function(test, board) {
       clients.splice(0, 1);
     }, 200);
 
-    clients[0].leave();
     clients[0].socket.end();
   });
 

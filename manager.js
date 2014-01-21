@@ -7,6 +7,7 @@ var FastMap = require('collections/fast-map');
 var through = require('through');
 var Room = require('./room');
 var util = require('util');
+var jsonparse = require('cog/jsonparse');
 
 var baseHandlers = {
   announce: require('./handlers/announce')
@@ -78,8 +79,6 @@ ConnectionManager.prototype.connect = function(spark) {
     var command;
     var handler;
     var targetId;
-    var attemptParse = true;
-    var payload = data;
     var preventSend = false;
     var parts;
 
@@ -90,32 +89,17 @@ ConnectionManager.prototype.connect = function(spark) {
         command = data.slice(1, data.indexOf('|', 1)).toLowerCase();
 
         // get the payload
-        payload = data.slice(command.length + 2);
+        parts = data.slice(command.length + 2).split('|').map(jsonparse);
 
         // if we have a to command, and no designated target
         if (command === 'to') {
-          // get the target id
-          parts = payload.split('|');
-
           // get the target
           targetId = parts[0];
           target = mgr.sparks.get(targetId);
-          attemptParse = false;
 
           // if the target is unknown, refuse to send
           if (! target) {
             return false;
-          }
-        }
-
-        if (attemptParse) {
-          // try and parse the payload as JSON
-          try {
-            payload = JSON.parse(payload);
-          }
-          catch (e) {
-            debug('error parsing json: ', payload);
-            // not json
           }
         }
       }
@@ -126,14 +110,14 @@ ConnectionManager.prototype.connect = function(spark) {
 
     // if we have a handler, the invoke
     if (typeof handler == 'function') {
-      preventSend = !!handler(mgr, spark, data, payload);
+      preventSend = !!handler(mgr, spark, data, parts);
     }
 
     // debug('got message: ' + data + ', command: ' + command + ', prevent send: ' + preventSend, payload);
 
     // trigger a command event
     if (command) {
-      mgr.emit(command, payload);
+      mgr.emit(command, parts[parts.length - 1]);
     }
 
     // if we are preventing send, then return

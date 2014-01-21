@@ -27,15 +27,27 @@ module.exports = Room;
 **/
 Room.prototype.leave = function(spark) {
   var idx = this.sparks.indexOf(spark);
+  var srcId = spark.metadata && spark.metadata.id;
   var room = this;
 
   if (idx >= 0) {
-    // send a leave message to all the other peers
-    (spark.peers || []).forEach(function(peerId) {
-      room.write('/leave|' + JSON.stringify({ id: peerId }), spark);
-    });
-
     this.sparks.splice(idx, 1);
+
+    // send a leave message to all the other peers
+    this.sparks.forEach(function(peerSpark) {
+      var agent = peerSpark.metadata && peerSpark.metadata.agent;
+
+      // if we have an agent specified we are using the new
+      // version of the signaller so use two || as the header
+      // TODO: clean up this is hacky
+      var messageHeader = agent ?
+        '/leave|{"id":"' + srcId + '"}|' :
+        '/leave|';
+
+      if (srcId) {
+        peerSpark.write(messageHeader + JSON.stringify({ id: srcId }));
+      }
+    });
   }
 };
 
