@@ -118,6 +118,11 @@ ConnectionManager.prototype.connect = function(spark) {
       mgr.emit(command, parts[parts.length - 1]);
     }
 
+    // emit a general data event as information is being pushed through
+    // switchboard - this is an ideal extension point for any applications
+    // wanting to log or monitor the data flow of the switchboard
+    mgr.emit('data', data, spark.metadata && spark.metadata.id, spark);
+
     // if we are preventing send, then return
     if (preventSend) {
       return false;
