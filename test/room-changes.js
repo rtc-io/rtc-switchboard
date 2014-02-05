@@ -154,6 +154,17 @@ var start = module.exports = function(test, board) {
     }, 500);
   });
 
+  test('client:2 close, client:0 receives leave', function(t) {
+    t.plan(1);
+
+    clients[0].once('peer:leave', function(id) {
+      t.equal(id, clients[2].id, 'client:0 captured peer:leave for client:2');
+      clients.splice(2, 1);
+    });
+
+    clients[2].socket.end();
+  });
+
   test('close connections', cleanup(board, clients));
 };
 
