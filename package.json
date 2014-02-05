@@ -34,6 +34,7 @@
     "tape": "~2.3.0",
     "rtc-signaller": "~0.18.2",
     "uuid": "~1.4.1",
-    "express": "~3.4.4"
+    "express": "~3.4.4",
+    "bunyan": "~0.22.1"
   }
 }
