@@ -127,6 +127,54 @@ module.exports = function(mgr, spark, data, payload) {
 };
 ```
 
+## Logging and Analytics using the `data` event
+
+Every message that flows through the switchboard (whether handled or not)
+can be logged through tapping into the `data` event.  The example below
+demonstrates how this can be done with a node logging module like
+[bunyan](https://github.com/trentm/node-bunyan):
+
+```js
+var express = require('express');
+var app = express();
+var server = require('http').Server(app);
+var port = process.env.PORT || 3000;
+var bunyan = require('bunyan');
+var log = bunyan.createLogger({ name: 'rtc-switchboard' });
+
+// create the switchboard
+var switchboard = require('rtc-switchboard')(server);
+
+// we need to expose the primus library
+app.get('/rtc.io/primus.js', switchboard.library());
+
+server.listen(port, function(err) {
+  if (err) {
+    return;
+  }
+
+  console.log('server running at: http://localhost:' + port + '/');
+});
+
+switchboard.on('data', function(data, peerId, spark) {
+  log.info({ peer: peerId }, 'received: ' + data);
+});
+```
+
+As can be seen in the example above, the handlers of the `data` event can
+expect to receive three arguments to the handler function, as per the code
+snippet below:
+
+```js
+switchboard.on('data', function(data, peerId, spark) {
+});
+```
+
+The `data` is the raw data of that has been sent from the client, the
+`peerId` is the id of the peer sending the data (this will be `undefined` if
+it is a message received prior to an `/announce` command).  Finally we have
+the raw primus `spark` that can be examined for additional information.
+
 ## Reference
 
 ### switchboard(server, opts?)
