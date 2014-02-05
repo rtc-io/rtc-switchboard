@@ -24,13 +24,11 @@ module.exports = function(mgr, spark, data, parts) {
   mgr.sparks.set(peerId, spark);
 
   // if we have a room, then get the spark to join the room
-  if (payload.room) {
-    room = spark.scope = mgr.joinRoom(payload.room, spark);
+  room = spark.scope = mgr.joinRoom(payload.room || '__default', spark);
 
-    // send the spark the room connection info
-    spark.write('/roominfo|' + JSON.stringify({
-      // send back the number of peers (including ourself)
-      memberCount: room.sparks.length
-    }));
-  }
+  // send the spark the room connection info
+  spark.write('/roominfo|' + JSON.stringify({
+    // send back the number of peers (including ourself)
+    memberCount: room.sparks.length
+  }));
 };

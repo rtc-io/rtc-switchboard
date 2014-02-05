@@ -1,7 +1,7 @@
 /* jshint node: true */
 'use strict';
 
-var debug = require('debug')('rtc-switchboard-room');
+var debug = require('debug')('rtc-switchboard');
 
 /**
   ### Room(name)

@@ -71,8 +71,6 @@ ConnectionManager.prototype.connect = function(spark) {
   var handlers = this.handlers;
   var mgr = this;
 
-  // initialise the spark scope to primus
-  spark.scope = this.primus;
   debug('new connection: ' + spark.id);
 
   function write(data, target) {
@@ -129,7 +127,7 @@ ConnectionManager.prototype.connect = function(spark) {
       debug('/to ' + targetId + ', data: ' + data);
       target.write(data);
     }
-    else {
+    else if (spark.scope) {
       debug('writing data to spark scope: ', data);
       spark.scope.write(data, spark);
     }
@@ -175,11 +173,13 @@ ConnectionManager.prototype.joinRoom = function(name, spark) {
 
   // if we don't have a room, then create one
   if (! room) {
+    debug('creating new room: ' + name);
     room = this.rooms[name] = new Room(name);
   }
 
   // if the spark already has a room, then leave the room
   if (spark && spark._room && this.rooms[spark._room]) {
+    debug('sending /leave message for room: ' + spark._room);
     this.rooms[spark._room].leave(spark);
   }
 
