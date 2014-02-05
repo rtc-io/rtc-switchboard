@@ -5,5 +5,6 @@ server.start(function(test, board) {
   require('./room-isolation')(test, board);
   require('./room-leave')(test, board);
   require('./room-info')(test, board);
+  require('./room-changes')(test, board);
   require('./to-messaging')(test, board);
 });
