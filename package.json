@@ -23,7 +23,7 @@
     "url": "https://github.com/rtc-io/rtc-switchboard/issues"
   },
   "dependencies": {
-    "primus": "~1.5.0",
+    "primus": "~2.0.1",
     "ws": "~0.4.31",
     "debug": "~0.7.2",
     "through": "~2.3.4",
