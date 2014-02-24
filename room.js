@@ -1,7 +1,9 @@
 /* jshint node: true */
 'use strict';
 
+var EventEmitter = require('events').EventEmitter;
 var debug = require('debug')('rtc-switchboard');
+var util = require('util');
 
 /**
   ### Room(name)
@@ -14,10 +16,13 @@ function Room(name) {
     return new Room(name);
   }
 
+  EventEmitter.call(this);
+
   this.name = name;
   this.sparks = [];
 }
 
+util.inherits(Room, EventEmitter);
 module.exports = Room;
 
 /**
@@ -48,6 +53,11 @@ Room.prototype.leave = function(spark) {
         peerSpark.write(messageHeader + JSON.stringify({ id: srcId }));
       }
     });
+
+    // if we have no remaining sparks destroy the room
+    if (this.sparks.length === 0) {
+      this.emit('destroy');
+    }
   }
 };
 
