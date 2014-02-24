@@ -37,10 +37,9 @@ var start = module.exports = function(test, board) {
 
   test('close connections', cleanup(board, clients));
 
-  test('check 0 room members', function(t) {
-    t.plan(2);
-    t.ok(board.rooms[roomId], 'have room');
-    t.equal(board.rooms[roomId].sparks.length, 0);
+  test('check room has been destroyed', function(t) {
+    t.plan(1);
+    t.notOk(board.rooms[roomId], 'room has been removed');
   });
 };
 
