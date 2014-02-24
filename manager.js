@@ -166,7 +166,16 @@ ConnectionManager.prototype.createSocket = function(url) {
   Join the room specified by `name`.
 **/
 ConnectionManager.prototype.joinRoom = function(name, spark) {
+  var mgr = this;
   var room;
+
+  function handleRoomDestroy() {
+    // release the room reference
+    mgr.rooms[name] = undefined;
+
+    // trigger the room:destroy event
+    mgr.emit('room:destroy', name);
+  }
 
   // if the spark already belongs to the room, then do nothing
   if (spark && spark._room === name) {
@@ -180,6 +189,12 @@ ConnectionManager.prototype.joinRoom = function(name, spark) {
   if (! room) {
     debug('creating new room: ' + name);
     room = this.rooms[name] = new Room(name);
+
+    // attach a destroy listener to trigger a room:destroy event
+    room.on('destroy', handleRoomDestroy);
+
+    // emit the room:create event
+    this.emit('room:create', name, room);
   }
 
   // if the spark already has a room, then leave the room
