@@ -82,6 +82,44 @@ var start = module.exports = function(test, board) {
     clients[1].socket.end();
   });
 
+  test('connect 0', connect(board, clients, 0));
+
+  test('switchboard emits another room:create event when a new room is recreated', function(t) {
+    t.plan(1);
+
+    board.once('room:create', function(name) {
+      t.equal(name, roomId, 'room id match');
+    });
+
+    clients[0].announce({ room: roomId });
+  });
+
+  test('switchboard emits room:create and room:destroy events when a client changes room', function(t) {
+    var newRoomId = uuid.v4();
+
+    t.plan(2);
+
+    board.once('room:destroy', function(name) {
+      t.equal(name, roomId, 'old room destroyed');
+    });
+
+    board.once('room:create', function(name) {
+      t.equal(name, newRoomId, 'new room created');
+    });
+
+    clients[0].announce({ room: newRoomId });
+  });
+
+  test('client:0 close', function(t) {
+    t.plan(1);
+
+    board.once('room:destroy', function(name) {
+      t.notEqual(name, roomId, 'new room destroyed');
+    });
+
+    clients[0].socket.end();
+  });
+
   // test('close connections', cleanup(board, clients));
 };
 
