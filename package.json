@@ -31,7 +31,7 @@
     "cog": "~0.5.1"
   },
   "devDependencies": {
-    "tape": "~2.3.0",
+    "tape": "~2.5.0",
     "rtc-signaller": "~0.18.2",
     "uuid": "~1.4.1",
     "express": "~3.4.4",
