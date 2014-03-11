@@ -6,8 +6,8 @@ abstraction library, [primus](https://github.com/primus/primus).
 
 [![NPM](https://nodei.co/npm/rtc-switchboard.png)](https://nodei.co/npm/rtc-switchboard/)
 
-[![Build Status](https://travis-ci.org/rtc-io/rtc-switchboard.png?branch=master)](https://travis-ci.org/rtc-io/rtc-switchboard)
-[![unstable](http://hughsk.github.io/stability-badges/dist/unstable.svg)](http://github.com/hughsk/stability-badges)
+[![Build Status](https://img.shields.io/travis/rtc-io/rtc-switchboard.svg?branch=master)](https://travis-ci.org/rtc-io/rtc-switchboard)
+![unstable](https://img.shields.io/badge/stability-unstable-yellowgreen.svg)
 
 ## Usage: Standalone
 
