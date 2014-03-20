@@ -27,7 +27,7 @@
     "ws": "~0.4.31",
     "debug": "~0.7.2",
     "through": "~2.3.4",
-    "collections": "~1.0.0",
+    "collections": "^2.0.0",
     "cog": "~0.5.1"
   },
   "devDependencies": {
