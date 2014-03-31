@@ -8,8 +8,12 @@ var ConnectionManager = require('./manager');
 /**
   # rtc-switchboard
 
-  This is an rtc.io signaller that makes use of the excellent realtime
-  abstraction library, [primus](https://github.com/primus/primus).
+  This is an rtc.io signalling server (counterpart to
+  [rtc-signaller](https://github.com/rtc-io/rtc-signaller) that makes use of
+  the excellent realtime abstraction library,
+  [primus](https://github.com/primus/primus). It has been designed and built
+  primarily as a _reference implementation_ for a signalling server and is
+  not designed to be deployed at scale.
 
   ## Usage: Standalone
 
