@@ -25,7 +25,7 @@
   "dependencies": {
     "primus": "~2.0.1",
     "ws": "~0.4.31",
-    "debug": "~0.7.2",
+    "debug": "^0.8.0",
     "through": "~2.3.4",
     "collections": "^2.0.0",
     "cog": "~0.5.1"
