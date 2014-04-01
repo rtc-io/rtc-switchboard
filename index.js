@@ -2,6 +2,7 @@
 'use strict';
 
 var debug = require('debug')('rtc-switchboard');
+var defaults = require('cog/defaults');
 var Primus = require('primus');
 var ConnectionManager = require('./manager');
 
@@ -118,12 +119,21 @@ var ConnectionManager = require('./manager');
 
 **/
 module.exports = function(server, opts) {
+  var primus;
+  var manager;
+  var library;
+
+  // specify opts defaults
+  opts = defaults({}, opts, {
+    parser: require('./parser-noop')
+  });
+
   // create the primus instance
-  var primus = (opts || {}).primus || new Primus(server, opts);
+  primus = (opts || {}).primus || new Primus(server, opts);
 
   // create the connection manager
-  var manager = new ConnectionManager(primus, opts);
-  var library = manager.library();
+  manager = new ConnectionManager(primus, opts);
+  library = manager.library();
 
   if (opts && opts.servelib) {
     server.on('request', function(req, res) {
