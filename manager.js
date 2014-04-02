@@ -115,7 +115,7 @@ ConnectionManager.prototype.connect = function(spark) {
 
     // trigger a command event
     if (command) {
-      mgr.emit(command, parts[parts.length - 1]);
+      mgr.emit(command, parts[parts.length - 1], spark);
     }
 
     // emit a general data event as information is being pushed through
