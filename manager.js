@@ -113,9 +113,10 @@ ConnectionManager.prototype.connect = function(spark) {
 
     // debug('got message: ' + data + ', command: ' + command + ', prevent send: ' + preventSend, payload);
 
-    // trigger a command event
+    // trigger a command event, and provide the first data part
+    // (skipping metadata, part = 0) 
     if (command) {
-      mgr.emit(command, parts[parts.length - 1], spark);
+      mgr.emit(command, parts[1], spark);
     }
 
     // emit a general data event as information is being pushed through
