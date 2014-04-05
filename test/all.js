@@ -2,6 +2,7 @@ var server = require('./helpers/server');
 
 server.start(function(test, board) {
   require('./connect')(test, board);
+  require('./disconnect-quick')(test, board);
   require('./room-isolation')(test, board);
   require('./room-leave')(test, board);
   require('./room-reuse')(test, board);
