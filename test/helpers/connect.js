@@ -12,7 +12,7 @@ module.exports = function(board, clients, index, opts) {
     // create the socket
     t.ok(socket = board.createSocket('http://localhost:3001'));
     t.ok(clients[index] = signaller(socket), 'created client ' + index);
-    clients[index].once('open', t.pass.bind(t, 'connected'));
+    clients[index].once('connected', t.pass.bind(t, 'connected'));
 
     // patch the socket into the signaller
     clients[index].socket = socket;
