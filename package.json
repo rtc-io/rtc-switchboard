@@ -32,7 +32,7 @@
   },
   "devDependencies": {
     "tape": "^2.12.1",
-    "rtc-signaller": "^0.19.2",
+    "rtc-signaller": "^1",
     "uuid": "~1.4.1",
     "express": "^3.5.1",
     "bunyan": "~0.22.1"
