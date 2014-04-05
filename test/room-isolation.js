@@ -89,7 +89,7 @@ var start = module.exports = function(test, board) {
 
       // splice out the 0 client
       clients.splice(0, 1);
-    }, 200);
+    }, 4000);
 
     clients[0].socket.end();
   });
