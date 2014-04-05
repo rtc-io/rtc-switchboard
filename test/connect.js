@@ -6,9 +6,8 @@ var start = module.exports = function(test, board) {
   var signallers = [];
 
   test('create a socket', function(t) {
-    t.plan(2);
+    t.plan(1);
     t.ok(socket = board.createSocket('http://localhost:3001'), 'socket created');
-    socket.once('open', t.pass.bind(t, 'opened'));
   });
 
   test('wrap a signaller around the socket', function(t) {
