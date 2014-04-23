@@ -23,18 +23,18 @@
     "url": "https://github.com/rtc-io/rtc-switchboard/issues"
   },
   "dependencies": {
-    "primus": "^2.1.2",
-    "ws": "~0.4.31",
-    "debug": "^0.8.0",
-    "through": "~2.3.4",
-    "collections": "^2.0.0",
-    "cog": "~0.5.1"
+    "primus": "^2",
+    "ws": "~0.4",
+    "debug": "~0.8",
+    "through": "^2",
+    "collections": "^1",
+    "cog": "~0.5"
   },
   "devDependencies": {
-    "tape": "^2.12.1",
+    "tape": "^2",
     "rtc-signaller": "^1",
-    "uuid": "~1.4.1",
-    "express": "^3.5.1",
-    "bunyan": "~0.22.1"
+    "uuid": "^1",
+    "express": "^3",
+    "bunyan": "~0.22"
   }
 }
