@@ -97,6 +97,7 @@ ConnectionManager.prototype.connect = function(spark) {
 
           // if the target is unknown, refuse to send
           if (! target) {
+            debug('got a to request for id "' + targetId + '" but cannot find target');
             return false;
           }
         }
@@ -114,7 +115,7 @@ ConnectionManager.prototype.connect = function(spark) {
     // debug('got message: ' + data + ', command: ' + command + ', prevent send: ' + preventSend, payload);
 
     // trigger a command event, and provide the first data part
-    // (skipping metadata, part = 0) 
+    // (skipping metadata, part = 0)
     if (command) {
       mgr.emit(command, parts[1], spark);
     }
