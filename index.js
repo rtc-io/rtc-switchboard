@@ -16,6 +16,16 @@ var ConnectionManager = require('./manager');
   primarily as a _reference implementation_ for a signalling server and is
   not designed to be deployed at scale.
 
+  ## Try it out
+
+  If you would like to our test signalling server (no uptime guaranteed) then
+  you can use [rtc-quickconnect](https://github.com/rtc-io/rtc-quickconnect)
+  and take it for a spin:
+
+  <<< examples/try-switchboard.js
+
+  Other examples are available in the [guidebook](http://guidebook.rtc.io)
+
   ## Usage: Standalone
 
   If you wish to use `rtc-switchboard` on it's own to test signalling,
@@ -100,7 +110,7 @@ var ConnectionManager = require('./manager');
   switchboard.on('data', function(data, peerId, spark) {
   });
   ```
-  
+
   The `data` is the raw data of that has been sent from the client, the
   `peerId` is the id of the peer sending the data (this will be `undefined` if
   it is a message received prior to an `/announce` command).  Finally we have

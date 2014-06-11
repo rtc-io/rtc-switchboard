@@ -10,8 +10,30 @@ not designed to be deployed at scale.
 
 [![NPM](https://nodei.co/npm/rtc-switchboard.png)](https://nodei.co/npm/rtc-switchboard/)
 
-[![Build Status](https://img.shields.io/travis/rtc-io/rtc-switchboard.svg?branch=master)](https://travis-ci.org/rtc-io/rtc-switchboard)
-![unstable](https://img.shields.io/badge/stability-unstable-yellowgreen.svg)
+[![Build Status](https://img.shields.io/travis/rtc-io/rtc-switchboard.svg?branch=master)](https://travis-ci.org/rtc-io/rtc-switchboard) [![unstable](https://img.shields.io/badge/stability-unstable-yellowgreen.svg)](https://github.com/badges/stability-badges) 
+
+## Try it out
+
+If you would like to our test signalling server (no uptime guaranteed) then
+you can use [rtc-quickconnect](https://github.com/rtc-io/rtc-quickconnect)
+and take it for a spin:
+
+```js
+var quickconnect = require('rtc-quickconnect');
+
+quickconnect('//switchboard.rtc.io/', { room: 'switchboard-test' })
+  .createDataChannel('test')
+  .once('channel:opened:test', function(peerId, dc) {
+    dc.onmessage = function(evt) {
+      console.log('received data: ', evt.data);
+    };
+
+    dc.send('hello');
+  });
+
+```
+
+Other examples are available in the [guidebook](http://guidebook.rtc.io)
 
 ## Usage: Standalone
 
@@ -45,13 +67,22 @@ var server = require('http').createServer();
 var switchboard = require('./')(server, { servelib: true });
 var port = parseInt(process.env.NODE_PORT || process.env.PORT || process.argv[2], 10) || 3000;
 
+server.on('request', function(req, res) {
+  if (req.url === '/') {
+    res.writeHead(302, {
+      'Location': 'https://github.com/rtc-io/rtc-switchboard'
+    });
+    res.end('switchboard available from: https://github.com/rtc-io/rtc-switchboard');
+  }
+});
+
 // start the server
 server.listen(port, function(err) {
   if (err) {
     return console.log('Encountered error starting server: ', err);
   }
 
-  console.log('server running on port: ' + port);
+  console.log('server running at http://localhost:' + port + '/');
 });
 
 ```
