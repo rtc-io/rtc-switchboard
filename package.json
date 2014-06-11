@@ -31,10 +31,11 @@
     "cog": "~0.5"
   },
   "devDependencies": {
-    "tape": "^2",
-    "rtc-signaller": "^1",
-    "uuid": "^1",
+    "bunyan": "~0.23",
     "express": "^4",
-    "bunyan": "~0.23"
+    "rtc-quickconnect": "^1",
+    "rtc-signaller": "^1",
+    "tape": "^2",
+    "uuid": "^1"
   }
 }
