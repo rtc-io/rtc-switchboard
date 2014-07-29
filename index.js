@@ -39,11 +39,11 @@ var ConnectionManager = require('./manager');
   node server.js
   ```
 
-  If you wish to run the server on a specific port, then set the `SERVER_PORT`
+  If you wish to run the server on a specific port, then set the `NODE_PORT`
   environment variable prior to execution:
 
   ```
-  SERVER_PORT=8997 node server.js
+  NODE_PORT=8997 node server.js
   ```
 
   ## Usage: API
