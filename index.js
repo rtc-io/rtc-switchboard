@@ -78,6 +78,14 @@ var ConnectionManager = require('./manager');
   [rtc-glue](https://github.com/rtc-io/rtc-glue)), as they will ensure the
   primus library has been included prior to running their internal code.
 
+  ## Usage: Docker
+
+  If you are interested in deploying an instance of `rtc-switchboard` using
+  [docker](https://www.docker.com/) then the following is a great place to
+  start:
+
+  <https://github.com/synctree/docker-rtc-switchboard>
+
   ## Writing Custom Command Handlers
 
   When you initialize the switchboard, you are able to provide custom handlers

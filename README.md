@@ -10,7 +10,7 @@ not designed to be deployed at scale.
 
 [![NPM](https://nodei.co/npm/rtc-switchboard.png)](https://nodei.co/npm/rtc-switchboard/)
 
-[![Build Status](https://img.shields.io/travis/rtc-io/rtc-switchboard.svg?branch=master)](https://travis-ci.org/rtc-io/rtc-switchboard) [![unstable](https://img.shields.io/badge/stability-unstable-yellowgreen.svg)](https://github.com/badges/stability-badges) 
+[![Build Status](https://img.shields.io/travis/rtc-io/rtc-switchboard.svg?branch=master)](https://travis-ci.org/rtc-io/rtc-switchboard) [![unstable](https://img.shields.io/badge/stability-unstable-yellowgreen.svg)](https://github.com/dominictarr/stability#unstable) 
 
 ## Try it out
 
@@ -128,6 +128,14 @@ __NOTE:__ A specific call to include primus is not required if you are
 working with particular rtc.io library (such as
 [rtc-glue](https://github.com/rtc-io/rtc-glue)), as they will ensure the
 primus library has been included prior to running their internal code.
+
+## Usage: Docker
+
+If you are interested in deploying an instance of `rtc-switchboard` using
+[docker](https://www.docker.com/) then the following is a great place to
+start:
+
+<https://github.com/synctree/docker-rtc-switchboard>
 
 ## Writing Custom Command Handlers
 
