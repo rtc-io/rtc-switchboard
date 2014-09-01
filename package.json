@@ -23,12 +23,12 @@
     "url": "https://github.com/rtc-io/rtc-switchboard/issues"
   },
   "dependencies": {
-    "primus": "^2",
-    "ws": "~0.4",
-    "debug": "^1",
-    "through": "^2",
+    "cog": "^1.0.0",
     "collections": "^1",
-    "cog": "~0.5"
+    "debug": "^1",
+    "primus": "^2",
+    "through": "^2",
+    "ws": "~0.4"
   },
   "devDependencies": {
     "bunyan": "^1.0.1",
