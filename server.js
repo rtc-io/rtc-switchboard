@@ -19,3 +19,12 @@ server.listen(port, function(err) {
 
   console.log('server running at http://localhost:' + port + '/');
 });
+
+switchboard.on('room:destroy', function(room) {
+  console.log('room ' + room + ' destroyed, ' + switchboard.rooms.length + ' active rooms remain');
+
+  if (typeof gc == 'function') {
+    console.log('gc');
+    gc();
+  }
+});
