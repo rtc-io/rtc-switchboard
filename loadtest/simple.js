@@ -1,6 +1,6 @@
 var async = require('async');
 var room = process.env.ROOM || require('uuid').v4();
-var switchboard = process.env.SWITCHBOARD || 'ws://switchboard.elasticbeanstalk.com/primus';
+var switchboard = process.env.SWITCHBOARD || 'ws://localhost:3000/primus';
 var signallers = [];
 
 // require('cog/logger').enable('*');
