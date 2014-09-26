@@ -32,7 +32,6 @@
   },
   "devDependencies": {
     "async": "^0.9.0",
-    "bunyan": "^1.0.1",
     "express": "^4",
     "rtc-quickconnect": "^3.0.0",
     "rtc-signaller": "^3.0.0",
