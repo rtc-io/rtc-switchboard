@@ -147,10 +147,6 @@ ConnectionManager.prototype.connect = function(spark) {
     if (spark.scope && typeof spark.scope.leave == 'function') {
       spark.scope.leave(spark);
     }
-
-    if (spark.metadata && spark.metadata.id) {
-      mgr.sparks.delete(spark.metadata.id);
-    }
   }
 
   debug('spark connecting');
@@ -247,5 +243,9 @@ ConnectionManager.prototype._cleanupPeer = function(data) {
   // if we have the spark, look at removing it from the room
   if (spark && spark.scope && typeof spark.scope.leave === 'function') {
     spark.scope.leave(spark);
+  }
+
+  if (spark) {
+    this.sparks.delete(data.id);
   }
 };
