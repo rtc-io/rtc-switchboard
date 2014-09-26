@@ -3,6 +3,8 @@ var room = process.env.ROOM || require('uuid').v4();
 var switchboard = process.env.SWITCHBOARD || 'ws://switchboard.elasticbeanstalk.com/primus';
 var signallers = [];
 
+// require('cog/logger').enable('*');
+
 function addSignaller(callback) {
   var signaller;
   var pending = signallers.length + 1;
@@ -23,10 +25,9 @@ function addSignaller(callback) {
   })
 
   signaller = require('rtc-signaller')(switchboard, { autoreply: false });
-  signallers.push(signaller);
 
+  signallers.push(signaller);
   signaller.once('connected', function() {
-    console.log('connected to signalling server');
     pending--;
     checkPending();
   });
@@ -38,3 +39,7 @@ function addSignaller(callback) {
 async.forever(addSignaller, function(err) {
   console.log('failed with err: ', err);
 });
+
+setInterval(function() {
+  signallers[0].send('/ping');
+}, 5000);
