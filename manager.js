@@ -38,7 +38,7 @@ function ConnectionManager(primus, opts) {
   this.primus = primus;
 
   // create a rooms container
-  this.rooms = {};
+  this.rooms = new FastMap();
 
   // initialise the peer lookups
   this.sparks = new FastMap();
@@ -173,7 +173,7 @@ ConnectionManager.prototype.joinRoom = function(name, spark) {
 
   function handleRoomDestroy() {
     // release the room reference
-    mgr.rooms[name] = undefined;
+    mgr.rooms.delete(name);
 
     // trigger the room:destroy event
     mgr.emit('room:destroy', name);
@@ -181,16 +181,16 @@ ConnectionManager.prototype.joinRoom = function(name, spark) {
 
   // if the spark already belongs to the room, then do nothing
   if (spark && spark._room === name) {
-    return this.rooms[name];
+    return this.rooms.get(name);
   }
 
   // get the room
-  room = this.rooms[name];
+  room = this.rooms.get(name);
 
   // if we don't have a room, then create one
   if (! room) {
     debug('creating new room: ' + name);
-    room = this.rooms[name] = new Room(name);
+    this.rooms.set(name, room = new Room(name));
 
     // attach a destroy listener to trigger a room:destroy event
     room.on('destroy', handleRoomDestroy);
@@ -200,9 +200,9 @@ ConnectionManager.prototype.joinRoom = function(name, spark) {
   }
 
   // if the spark already has a room, then leave the room
-  if (spark && spark._room && this.rooms[spark._room]) {
+  if (spark && spark._room && this.rooms.get(spark._room)) {
     debug('sending /leave message for room: ' + spark._room);
-    this.rooms[spark._room].leave(spark);
+    this.rooms.get(spark._room).leave(spark);
   }
 
   // flag the spark as belonging to a particular room
