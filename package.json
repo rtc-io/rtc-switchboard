@@ -34,8 +34,8 @@
     "async": "^0.9.0",
     "bunyan": "^1.0.1",
     "express": "^4",
-    "rtc-quickconnect": "^2.7.0",
-    "rtc-signaller": "^2.5.0",
+    "rtc-quickconnect": "^3.0.0",
+    "rtc-signaller": "^3.0.0",
     "tape": "^2",
     "uuid": "^1",
     "whisk": "^0.6.2"
