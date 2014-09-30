@@ -141,11 +141,16 @@ ConnectionManager.prototype.connect = function(spark) {
   }
 
   function end() {
-    debug('spark ended, disconnecting');
+    debug('spark ended, disconnecting: ' + spark.id);
 
     // invoke the leave action if part of a room
     if (spark.scope && typeof spark.scope.leave == 'function') {
       spark.scope.leave(spark);
+    }
+
+    if (spark.metadata) {
+      console.log('removing spark: ' + spark.metadata.id);
+      mgr.sparks.delete(spark.metadata.id);
     }
   }
 
@@ -240,12 +245,10 @@ ConnectionManager.prototype.library = function() {
 ConnectionManager.prototype._cleanupPeer = function(data) {
   var spark = data && data.id && this.sparks.get(data.id);
 
+  console.log('cleaning up peer: ', data);
+
   // if we have the spark, look at removing it from the room
   if (spark && spark.scope && typeof spark.scope.leave === 'function') {
     spark.scope.leave(spark);
-  }
-
-  if (spark) {
-    this.sparks.delete(data.id);
   }
 };
