@@ -27,10 +27,12 @@ function addSignaller(callback) {
   signaller = require('rtc-signaller')(switchboard, { autoreply: false });
 
   signallers.push(signaller);
-  signaller.once('connected', function() {
-    pending--;
-    checkPending();
-  });
+  signaller
+    .once('error', callback)
+    .once('connected', function() {
+      pending--;
+      checkPending();
+    });
 
   signaller.announce({ room: room });
   console.log(signallers.length);
