@@ -24,9 +24,7 @@ module.exports = function(mgr, spark, parts, primus, opts) {
     mgr.peers.set(spark.peerId = payload.id, spark);
   }
 
-  if (payload.room) {
-    spark.room = mgr.assignRoom(payload.room, spark);
-  }
+  spark.room = mgr.assignRoom(payload.room || 'default', spark);
 
   return true;
 
