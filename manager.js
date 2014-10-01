@@ -129,6 +129,16 @@ module.exports = function(primus, opts) {
     }
   });
 
+  function serveLibrary(opts) {
+    return function(req, res) {
+      res.writeHead(200, {
+        'content-type': 'application/javascript'
+      });
+
+      res.end(primus.library());
+    };
+  }
+
   primus.on('connection', function(spark) {
     spark.on('data', processData(spark));
   });
@@ -144,6 +154,7 @@ module.exports = function(primus, opts) {
     }
   });
 
+  mgr.library = serveLibrary;
   mgr.assignRoom = assignRoom;
   mgr.createSocket = primus.Socket;
 
