@@ -1,84 +1,26 @@
-/* jshint node: true */
-'use strict';
-
-var EventEmitter = require('events').EventEmitter;
-var debug = require('debug')('rtc-switchboard');
-var FastMap = require('collections/fast-map');
-var through = require('through');
-var Room = require('./room');
-var util = require('util');
+var mbus = require('mbus');
+var curry = require('curry');
+var extend = require('cog/extend');
 var jsonparse = require('cog/jsonparse');
+var MultiMap = require('collections/multi-map');
+var FastMap = require('collections/fast-map');
+var SortedMap = require('collections/sorted-map');
 
-var baseHandlers = {
-  announce: require('./handlers/announce')
-};
+module.exports = function(primus, opts) {
+  var mgr = mbus('switchboard');
+  var handlers = extend({
+    announce: require('./handlers/announce')
+  }, (opts || {}).handlers);
 
-/**
-  ### ConnectionManager(primus, opts)
+  var rooms = mgr.rooms = new FastMap();
+  var peers = mgr.peers = new SortedMap();
 
-  The `ConnectionManager` is used to route messages from one peer to another.
-  When a peer announces itself to the signalling server, if it has specified
-  a room, then general messages will only be routed to other peers in the
-  same room.
-
-  An exeption to this case is `/to` messages which are routed directly to
-  the specified peer.
-**/
-function ConnectionManager(primus, opts) {
-  var handlers;
-
-  if (! (this instanceof ConnectionManager)) {
-    return new ConnectionManager();
-  }
-
-  // inherited
-  EventEmitter.call(this);
-
-  // save a reference to primus
-  this.primus = primus;
-
-  // create a rooms container
-  this.rooms = new FastMap();
-
-  // initialise the peer lookups
-  this.sparks = new FastMap();
-
-  // initialise the handlers
-  handlers = this.handlers = (opts || {}).handlers || {};
-
-  // add the base handlers if not specifically defined
-  Object.keys(baseHandlers).forEach(function(name) {
-    if (! handlers[name]) {
-      handlers[name] = baseHandlers[name];
-    }
-  });
-
-  // when peers are leaving, ensure cleanup
-  this.on('leave', this._cleanupPeer.bind(this));
-}
-
-util.inherits(ConnectionManager, EventEmitter);
-module.exports = ConnectionManager;
-
-/**
-  #### connect(spark)
-
-  Return a [through](https://github.com/dominictarr/through) stream for the
-  spark that we can pipe the incoming data from the spark into to be handled
-  correctly.
-**/
-ConnectionManager.prototype.connect = function(spark) {
-  var handlers = this.handlers;
-  var mgr = this;
-
-  debug('new connection: ' + spark.id);
-
-  function write(data, target) {
-    var command;
-    var handler;
-    var targetId;
-    var preventSend = false;
+  var processData = curry(function(spark, data) {
     var parts;
+    var handler;
+    var command;
+    var target;
+    var relay = true;
 
     // if we have string data then preprocess
     if (typeof data == 'string' || (data instanceof String)) {
@@ -91,164 +33,119 @@ ConnectionManager.prototype.connect = function(spark) {
 
         // if we have a to command, and no designated target
         if (command === 'to') {
-          // get the target
-          targetId = parts[0];
-          target = mgr.sparks.get(targetId);
+          target = mgr.peers.get(parts[0]);
 
           // if the target is unknown, refuse to send
           if (! target) {
-            debug('got a to request for id "' + targetId + '" but cannot find target');
+            debug('got a to request for id "' + parts[0] + '" but cannot find target');
             return false;
           }
         }
       }
     }
 
-    // check if we have a handler for the current command
+    // look for commands and handlers
     handler = command && handlers[command];
 
-    // if we have a handler, the invoke
+    // if we have a handler, invoke
     if (typeof handler == 'function') {
-      preventSend = !!handler(mgr, spark, data, parts);
+      relay = handler(mgr, spark, parts, primus, opts);
     }
 
-    // debug('got message: ' + data + ', command: ' + command + ', prevent send: ' + preventSend, payload);
-
-    // trigger a command event, and provide the first data part
-    // (skipping metadata, part = 0)
     if (command) {
-      mgr.emit(command, parts[1], spark);
+      mgr(command, parts[1], spark);
     }
 
-    // emit a general data event as information is being pushed through
-    // switchboard - this is an ideal extension point for any applications
-    // wanting to log or monitor the data flow of the switchboard
-    mgr.emit('data', data, spark.metadata && spark.metadata.id, spark);
-
-    // if we are preventing send, then return
-    if (preventSend) {
-      return false;
-    }
-
+    // if we have a room, and the relay flag has been set, then relay
     if (target) {
-      debug('/to ' + targetId + ', data: ' + data);
       target.write(data);
     }
-    else if (spark.scope) {
-      debug('writing data to spark scope: ', data);
-      spark.scope.write(data, spark);
+    else if (spark.room && relay) {
+      spark.room(data, spark);
     }
-  }
+  });
 
-  function end() {
-    debug('spark ended, disconnecting: ' + spark.id);
+  var sendToRoom = curry(function(name, data, src) {
+    (rooms.get(name) || []).forEach(function(spark) {
+      // don't send stuff to ourselves that we have sent
+      if (spark === src) {
+        return;
+      }
 
-    // invoke the leave action if part of a room
-    if (spark.scope && typeof spark.scope.leave == 'function') {
-      spark.scope.leave(spark);
+      spark.write(data);
+    });
+  });
+
+  var assignRoom = curry(function(name, spark) {
+    var sparks = (rooms.get(name) || []).concat(spark);
+
+    // if the spark existed in a prior room, then remove from that room
+    if (spark.roomid) {
+      removeMember(spark.roomid, spark);
     }
 
-    if (spark.metadata) {
-      console.log('removing spark: ' + spark.metadata.id);
-      mgr.sparks.delete(spark.metadata.id);
+    // update the room sparks
+    rooms.set(name, sparks);
+    spark.roomid = name;
+
+    // write the number of sparks in the room back to the spark
+    spark.write('/roominfo|' + JSON.stringify({
+      // send back the number of peers (including ourself)
+      memberCount: sparks.length
+    }));
+
+    // if this is the first spark in the room we have a new room
+    if (sparks.length === 1) {
+      mgr('room:create', name);
     }
-  }
 
-  debug('spark connecting');
-  return through(write, end);
-};
+    return sendToRoom(name);
+  });
 
-/**
-  #### createSocket(url)
+  var removeMember = curry(function(name, spark) {
+    var sparks = rooms.get(name);
+    var leaveMsg = '/leave|{"id":"' + spark.peerId + '"}|{"id":"' + spark.peerId + '"}';
 
-  Create a websocket client connection the underlying primus server.
-**/
-ConnectionManager.prototype.createSocket = function(url) {
-  return new this.primus.Socket(url);
-};
+    // if we have no room, then abort
+    if (! sparks) {
+      return;
+    }
 
-/**
-  #### joinRoom(name, spark)
-
-  Join the room specified by `name`.
-**/
-ConnectionManager.prototype.joinRoom = function(name, spark) {
-  var mgr = this;
-  var room;
-
-  function handleRoomDestroy() {
-    // release the room reference
-    mgr.rooms.delete(name);
-
-    // trigger the room:destroy event
-    mgr.emit('room:destroy', name);
-  }
-
-  // if the spark already belongs to the room, then do nothing
-  if (spark && spark._room === name) {
-    return this.rooms.get(name);
-  }
-
-  // get the room
-  room = this.rooms.get(name);
-
-  // if we don't have a room, then create one
-  if (! room) {
-    debug('creating new room: ' + name);
-    this.rooms.set(name, room = new Room(name));
-
-    // attach a destroy listener to trigger a room:destroy event
-    room.on('destroy', handleRoomDestroy);
-
-    // emit the room:create event
-    this.emit('room:create', name, room);
-  }
-
-  // if the spark already has a room, then leave the room
-  if (spark && spark._room && this.rooms.get(spark._room)) {
-    debug('sending /leave message for room: ' + spark._room);
-    this.rooms.get(spark._room).leave(spark);
-  }
-
-  // flag the spark as belonging to a particular room
-  spark._room = name;
-
-  // add the current spark to the room
-  room.sparks.push(spark);
-
-  // return the room
-  return room;
-};
-
-/**
-  #### library(req, res)
-
-  Write the library to the response
-**/
-ConnectionManager.prototype.library = function() {
-  var content = this.primus.library();
-
-  return function(req, res) {
-    res.writeHead(200, {
-      'content-type': 'application/javascript'
+    // remove the spark from the list, creating a new array
+    sparks = sparks.filter(function(item) {
+      return item !== spark;
     });
 
-    res.end(content);
-  };
-};
+    sparks.forEach(function(item) {
+      item.write(leaveMsg);
+    });
 
-/**
-  #### _cleanupPeer(data)
+    if (sparks.length === 0) {
+      rooms.delete(name);
+      mgr('room:destroy', name);
+    }
+    else {
+      rooms.set(name, sparks);
+    }
+  });
 
-  Cleanup a peer when we receive a leave notification.
-**/
-ConnectionManager.prototype._cleanupPeer = function(data) {
-  var spark = data && data.id && this.sparks.get(data.id);
+  primus.on('connection', function(spark) {
+    spark.on('data', processData(spark));
+  });
 
-  console.log('cleaning up peer: ', data);
+  primus.on('disconnection', function(spark) {
+    if (spark.roomid) {
+      removeMember(spark.roomid, spark);
+    }
 
-  // if we have the spark, look at removing it from the room
-  if (spark && spark.scope && typeof spark.scope.leave === 'function') {
-    spark.scope.leave(spark);
-  }
+    if (spark.peerId) {
+      console.log('disconnected peer: ' + spark.peerId);
+      peers.delete(spark.peerId);
+    }
+  });
+
+  mgr.assignRoom = assignRoom;
+  mgr.createSocket = primus.Socket;
+
+  return mgr;
 };

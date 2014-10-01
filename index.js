@@ -1,10 +1,8 @@
 /* jshint node: true */
 'use strict';
 
-var debug = require('debug')('rtc-switchboard');
 var defaults = require('cog/defaults');
 var Primus = require('primus');
-var ConnectionManager = require('./manager');
 
 /**
   # rtc-switchboard
@@ -137,33 +135,22 @@ var ConnectionManager = require('./manager');
 
 **/
 module.exports = function(server, opts) {
-  var primus;
-  var manager;
-  var library;
-
-  // specify opts defaults
-  opts = defaults({}, opts, {
-    parser: require('./parser-noop')
-  });
-
   // create the primus instance
-  primus = (opts || {}).primus || new Primus(server, opts);
-
-  // create the connection manager
-  manager = new ConnectionManager(primus, opts);
-  library = manager.library();
+  var primus = (opts || {}).primus || new Primus(server, defaults(opts, {
+    parser: require('./parser-noop')
+  }));
 
   if (opts && opts.servelib) {
     server.on('request', function(req, res) {
       if (req.url === '/rtc.io/primus.js') {
-        library(req, res);
+        res.writeHead(200, {
+          'content-type': 'application/javascript'
+        });
+
+        res.end(primus.library());
       }
     });
   }
 
-  primus.on('connection', function(spark) {
-    spark.pipe(manager.connect(spark));
-  });
-
-  return manager;
+  return require('./manager')(primus, opts);
 };
