@@ -1,5 +1,4 @@
-/* jshint node: true */
-'use strict';
+var extend = require('cog/extend');
 
 /**
   ### announce handler
@@ -11,24 +10,38 @@
   `/to` messages are received.
 
 **/
-module.exports = function(mgr, spark, data, parts) {
+module.exports = function(mgr, spark, parts, primus, opts) {
   // get the payload (which is the last part)
   var payload = parts[parts.length - 1];
   var peerId = payload.id;
   var room;
 
   // update the spark metadata
-  spark.metadata = payload;
+  spark.metadata = extend(spark.metadata || {}, payload);
 
-  // create a lookup from the peer id to the spark id
-  mgr.sparks.set(peerId, spark);
+  // update the peerId if set
+  if (payload.id && (! spark.peerId)) {
+    mgr.peers.set(spark.peerId = payload.id, spark);
+  }
 
-  // if we have a room, then get the spark to join the room
-  room = spark.scope = mgr.joinRoom(payload.room || '__default', spark);
+  if (payload.room) {
+    spark.room = mgr.assignRoom(payload.room, spark);
+  }
 
-  // send the spark the room connection info
-  spark.write('/roominfo|' + JSON.stringify({
-    // send back the number of peers (including ourself)
-    memberCount: room.sparks.length
-  }));
+  return true;
+
+//   // update the spark metadata
+//   spark.metadata = payload;
+
+//   // create a lookup from the peer id to the spark id
+//   mgr.sparks.set(peerId, spark);
+
+//   // if we have a room, then get the spark to join the room
+//   room = spark.scope = mgr.joinRoom(payload.room || '__default', spark);
+
+//   // send the spark the room connection info
+//   spark.write('/roominfo|' + JSON.stringify({
+//     // send back the number of peers (including ourself)
+//     memberCount: room.sparks.length
+//   }));
 };
