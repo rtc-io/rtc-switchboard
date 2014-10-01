@@ -1,4 +1,4 @@
-var signaller = require('rtc-signaller');
+var signaller = require('rtc-signaller/signaller');
 
 module.exports = function(board, clients, index, opts) {
   return function(t) {
