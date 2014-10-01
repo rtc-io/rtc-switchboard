@@ -66,6 +66,7 @@ examples:
 var server = require('http').createServer();
 var switchboard = require('./')(server, { servelib: true });
 var port = parseInt(process.env.NODE_PORT || process.env.PORT || process.argv[2], 10) || 3000;
+var replify = require('replify');
 
 server.on('request', function(req, res) {
   if (req.url === '/') {
@@ -84,6 +85,29 @@ server.listen(port, function(err) {
 
   console.log('server running at http://localhost:' + port + '/');
 });
+
+// add the repl
+replify({
+  name: 'switchboard',
+  app: switchboard,
+  contexts: {
+    server: server
+  }
+});
+
+switchboard.on('room:create', function(room) {
+  console.log('room ' + room + ' created, now have ' + switchboard.rooms.length + ' active rooms');
+});
+
+switchboard.on('room:destroy', function(room) {
+  console.log('room ' + room + ' destroyed, ' + switchboard.rooms.length + ' active rooms remain');
+
+  if (typeof gc == 'function') {
+    console.log('gc');
+    gc();
+  }
+});
+
 
 ```
 
@@ -225,51 +249,6 @@ the raw primus `spark` that can be examined for additional information.
 Create the switchboard which uses primus under the hood. By default calling
 this function will create a new `Primus` instance and use the
 pure [websockets adapter](https://github.com/primus/primus#websockets).
-
-### ConnectionManager(primus, opts)
-
-The `ConnectionManager` is used to route messages from one peer to another.
-When a peer announces itself to the signalling server, if it has specified
-a room, then general messages will only be routed to other peers in the
-same room.
-
-An exeption to this case is `/to` messages which are routed directly to
-the specified peer.
-
-#### connect(spark)
-
-Return a [through](https://github.com/dominictarr/through) stream for the
-spark that we can pipe the incoming data from the spark into to be handled
-correctly.
-
-#### createSocket(url)
-
-Create a websocket client connection the underlying primus server.
-
-#### joinRoom(name, spark)
-
-Join the room specified by `name`.
-
-#### library(req, res)
-
-Write the library to the response
-
-#### _cleanupPeer(data)
-
-Cleanup a peer when we receive a leave notification.
-
-### Room(name)
-
-This is a simple helper class for encapsulating room details.
-
-#### leave(spark)
-
-Remove the specified spark from the room
-
-#### write(message, source)
-
-Write `message` to all the sparks in the room, with the exception of the
-`source` spark.
 
 ## Custom Message Handlers
 
