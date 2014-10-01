@@ -18,7 +18,7 @@ var start = module.exports = function(test, board) {
   test('check 2 room members', function(t) {
     t.plan(2);
     t.ok(board.rooms.get(roomId), 'have room');
-    t.equal(board.rooms.get(roomId).sparks.length, 2);
+    t.equal(board.rooms.get(roomId).length, 2);
   });
 
   test('announce 1 in new room', announce(board, clients, 1, { room: room2 }));
@@ -26,13 +26,13 @@ var start = module.exports = function(test, board) {
   test('check 1 member in original room', function(t) {
     t.plan(2);
     t.ok(board.rooms.get(roomId), 'have room');
-    t.equal(board.rooms.get(roomId).sparks.length, 1);
+    t.equal(board.rooms.get(roomId).length, 1);
   });
 
   test('check 1 member in new room', function(t) {
     t.plan(2);
     t.ok(board.rooms.get(room2), 'have room');
-    t.equal(board.rooms.get(room2).sparks.length, 1);
+    t.equal(board.rooms.get(room2).length, 1);
   });
 
   test('close connections', cleanup(board, clients));
