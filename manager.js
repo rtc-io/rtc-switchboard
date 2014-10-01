@@ -63,6 +63,9 @@ module.exports = function(primus, opts) {
     else if (spark.room && relay) {
       spark.room(data, spark);
     }
+
+    // report the data for logging / analysis
+    mgr('data', data, spark.peerId, spark);
   });
 
   var sendToRoom = curry(function(name, data, src) {
