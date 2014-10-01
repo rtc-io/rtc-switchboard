@@ -19,11 +19,11 @@ var start = module.exports = function(test, board) {
       t.equal(sig.id, data.id, 'announced signaller');
 
       // validate that the spark is mapped to the peer id
-      t.ok(spark = board.sparks.get(data.id), 'got spark');
+      t.ok(spark = board.peers.get(data.id), 'got spark');
 
       // spark has the peer listed in
-      t.ok(spark.metadata, 'spark now has metadata');
-      t.equal(spark.metadata.id, data.id, 'spark associated with client id');
+      t.ok(spark && spark.metadata, 'spark now has metadata');
+      t.equal(spark && spark.metadata.id, data.id, 'spark associated with client id');
     });
 
     // create the signaller instance
