@@ -9,7 +9,8 @@ var SortedMap = require('collections/sorted-map');
 module.exports = function(primus, opts) {
   var mgr = mbus('switchboard');
   var handlers = extend({
-    announce: require('./handlers/announce')
+    announce: require('./handlers/announce'),
+    ping: require('./handlers/ping')
   }, (opts || {}).handlers);
 
   var rooms = mgr.rooms = new FastMap();
