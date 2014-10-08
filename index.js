@@ -152,5 +152,24 @@ module.exports = function(server, opts) {
     });
   }
 
+  primus.transformer.on('previous::upgrade', function(req, socket, head) {
+    abortConnection(socket, 404, 'Not Found');
+  });
+
   return require('./manager')(primus, opts);
 };
+
+function abortConnection(socket, code, name) {
+  try {
+    var response = [
+      'HTTP/1.1 ' + code + ' ' + name,
+      'Content-type: text/html'
+    ];
+    socket.write(response.concat('', '').join('\r\n'));
+  }
+  catch (e) { /* ignore errors - we've aborted this connection */ }
+  finally {
+    // ensure that an early aborted connection is shut down completely
+    try { socket.destroy(); } catch (e) {}
+  }
+}
