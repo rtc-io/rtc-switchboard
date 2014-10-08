@@ -38,7 +38,7 @@ module.exports = function(primus, opts) {
 
           // if the target is unknown, refuse to send
           if (! target) {
-            debug('got a to request for id "' + parts[0] + '" but cannot find target');
+            console.warn('got a to request for id "' + parts[0] + '" but cannot find target');
             return false;
           }
         }
