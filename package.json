@@ -41,9 +41,9 @@
     "nopt": "^3.0.1",
     "replify": "^1.2.0",
     "rtc-quickconnect": "^3.0.0",
-    "rtc-signaller": "^3.1.0",
+    "rtc-signaller": "^4.0.0",
     "tape": "^3.0.0",
     "uuid": "^2.0.1",
-    "whisk": "^0.6.2"
+    "whisk": "^1.0.0"
   }
 }
