@@ -19,7 +19,6 @@ module.exports = function(board, clients) {
 
     clients.forEach(function(client) {
       client.leave();
-      client.socket.end();
     });
   };
 };

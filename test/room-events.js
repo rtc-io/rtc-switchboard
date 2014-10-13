@@ -27,7 +27,7 @@ var start = module.exports = function(test, board) {
       t.equal(name, roomId, 'room id match');
     });
 
-    clients[0].socket.end();
+    clients[0].leave();
   });
 
   test('connect 0', connect(board, clients, 0));
@@ -69,7 +69,7 @@ var start = module.exports = function(test, board) {
       t.pass('room:destroy event did not fire');
     }, 100);
 
-    clients[0].socket.end();
+    clients[0].leave();
   });
 
   test('client:1 close, room:destroy does fire', function(t) {
@@ -79,7 +79,7 @@ var start = module.exports = function(test, board) {
       t.equal(name, roomId, 'room id match');
     });
 
-    clients[1].socket.end();
+    clients[1].leave();
   });
 
   test('connect 0', connect(board, clients, 0));
@@ -117,7 +117,7 @@ var start = module.exports = function(test, board) {
       t.notEqual(name, roomId, 'new room destroyed');
     });
 
-    clients[0].socket.end();
+    clients[0].leave();
   });
 
   // test('close connections', cleanup(board, clients));

@@ -162,7 +162,7 @@ var start = module.exports = function(test, board) {
       clients.splice(2, 1);
     });
 
-    clients[2].socket.end();
+    clients[2].leave();
   });
 
   test('close connections', cleanup(board, clients));
