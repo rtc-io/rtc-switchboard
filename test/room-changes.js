@@ -73,16 +73,12 @@ var start = module.exports = function(test, board) {
   });
 
   test('client:2 reannounce (room - room1)', function(t) {
-    t.plan(4);
+    t.plan(3);
 
     clients[2].announce({ room: 'room1' });
     board.once('announce', function(data) {
       t.equal(data.id, clients[2].id);
       t.equal(data.room, 'room1', 'room === room1');
-    });
-
-    clients[0].once('peer:leave', function(id) {
-      t.equal(id, clients[2].id, 'client:0 got peer:leave for client:2');
     });
 
     clients[1].on('peer:announce', function(data) {
@@ -109,12 +105,16 @@ var start = module.exports = function(test, board) {
   });
 
   test('client:0 reannounce (room - room2)', function(t) {
-    t.plan(2);
+    t.plan(3);
 
     clients[0].announce({ room: 'room2' });
     board.once('announce', function(data) {
       t.equal(data.id, clients[0].id);
       t.equal(data.room, 'room2', 'room === room2');
+    });
+
+    clients[0].once('roominfo', function(data) {
+      t.equal(data.memberCount, 1, 'room has one member');
     });
   });
 
@@ -122,17 +122,17 @@ var start = module.exports = function(test, board) {
     t.plan(4);
 
     clients[2].announce({ room: 'room2' });
+    clients[2].once('roominfo', function(data) {
+      t.equal(data.memberCount, 2, 'room has two members');
+    });
+
     board.once('announce', function(data) {
       t.equal(data.id, clients[2].id);
       t.equal(data.room, 'room2', 'room === room2');
     });
 
-    clients[0].once('peer:announce', function(data) {
-      t.equal(data.id, clients[2].id, 'client:0 got announce for client:2');
-    });
-
-    clients[1].once('peer:leave', function(id) {
-      t.equal(id, clients[2].id, 'client:1 got peer:leave from client:2');
+    clients[0].once('peer:update', function(data) {
+      t.equal(data.id, clients[2].id, 'client:0 got update for client:2');
     });
   });
 
@@ -152,17 +152,6 @@ var start = module.exports = function(test, board) {
       t.pass('client:1 did not receive message');
       clients[0].removeAllListeners();
     }, 500);
-  });
-
-  test('client:2 close, client:0 receives leave', function(t) {
-    t.plan(1);
-
-    clients[0].once('peer:leave', function(id) {
-      t.equal(id, clients[2].id, 'client:0 captured peer:leave for client:2');
-      clients.splice(2, 1);
-    });
-
-    clients[2].leave();
   });
 
   test('close connections', cleanup(board, clients));
