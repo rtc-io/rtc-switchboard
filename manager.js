@@ -108,7 +108,6 @@ module.exports = function(primus, opts) {
 
   var removeMember = curry(function(name, spark) {
     var sparks = rooms.get(name);
-    var leaveMsg = '/leave|{"id":"' + spark.peerId + '"}|{"id":"' + spark.peerId + '"}';
 
     // if we have no room, then abort
     if (! sparks) {
@@ -118,10 +117,6 @@ module.exports = function(primus, opts) {
     // remove the spark from the list, creating a new array
     sparks = sparks.filter(function(item) {
       return item !== spark;
-    });
-
-    sparks.forEach(function(item) {
-      item.write(leaveMsg);
     });
 
     if (sparks.length === 0) {
