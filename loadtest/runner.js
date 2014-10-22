@@ -16,10 +16,11 @@ var procs = times(parsed.count || 1).map(function() {
   var room = uuid.v4();
   var proc = fork(__dirname + '/' + (parsed.test || 'simple') + '.js', {
     env: {
+      SWITCHBOARD: process.env.SWITCHBOARD,
       ROOM: room
     },
 
-    silent: true
+    silent: false
   });
 
   proc.room = room;
