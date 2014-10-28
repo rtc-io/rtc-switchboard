@@ -137,7 +137,8 @@ var Primus = require('primus');
 module.exports = function(server, opts) {
   // create the primus instance
   var primus = (opts || {}).primus || new Primus(server, defaults(opts, {
-    parser: require('./parser-noop')
+    parser: require('./parser-noop'),
+    timeout: false
   }));
 
   if (opts && opts.servelib) {
