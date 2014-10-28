@@ -1,18 +1,14 @@
 var server = require('./helpers/server');
 var signaller = require('rtc-signaller');
+var messenger = require('rtc-switchboard-messenger');
 
 var start = module.exports = function(test, board) {
   var socket;
   var sig;
 
-  test('create a socket', function(t) {
-    t.plan(1);
-    t.ok(socket = board.createSocket('http://localhost:3001'), 'socket created');
-  });
-
   test('create a signaller', function(t) {
     t.plan(2);
-    t.ok(sig = signaller(socket), 'signaller created');
+    t.ok(sig = signaller(messenger('http://localhost:3001')), 'signaller created');
     sig.announce({ name: 'Fred', room: require('uuid').v4() });
     sig.once('connected', t.pass.bind(t, 'signaller open'));
   });

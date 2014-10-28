@@ -1,4 +1,5 @@
 var signaller = require('rtc-signaller');
+var messenger = require('rtc-switchboard-messenger');
 
 module.exports = function(board, clients, index, opts) {
   return function(t) {
@@ -10,7 +11,7 @@ module.exports = function(board, clients, index, opts) {
     }
 
     // create the socket
-    t.ok(clients[index] = signaller('http://localhost:3001/'), 'created client ' + index);
+    t.ok(clients[index] = signaller(messenger('http://localhost:3001/')), 'created client ' + index);
     clients[index].once('connected', t.pass.bind(t, 'connected'));
 
     // patch the socket into the signaller
