@@ -58,11 +58,11 @@ var start = module.exports = function(test, board) {
     t.plan(2);
     clients[2].send('/hello');
 
-    clients[0].once('hello', function() {
+    clients[0].once('message:hello', function() {
       t.pass('client:0 got message');
     });
 
-    clients[1].once('hello', function() {
+    clients[1].once('message:hello', function() {
       t.fail('client:1 got message');
     });
 
@@ -90,11 +90,11 @@ var start = module.exports = function(test, board) {
     t.plan(2);
     clients[2].send('/hello');
 
-    clients[0].once('hello', function() {
+    clients[0].once('message:hello', function() {
       t.fail('client:0 got message');
     });
 
-    clients[1].once('hello', function() {
+    clients[1].once('message:hello', function() {
       t.pass('client:1 got message');
     });
 
@@ -113,7 +113,7 @@ var start = module.exports = function(test, board) {
       t.equal(data.room, 'room2', 'room === room2');
     });
 
-    clients[0].once('roominfo', function(data) {
+    clients[0].once('message:roominfo', function(data) {
       t.equal(data.memberCount, 1, 'room has one member');
     });
   });
@@ -122,7 +122,7 @@ var start = module.exports = function(test, board) {
     t.plan(4);
 
     clients[2].announce({ room: 'room2' });
-    clients[2].once('roominfo', function(data) {
+    clients[2].once('message:roominfo', function(data) {
       t.equal(data.memberCount, 2, 'room has two members');
     });
 
@@ -140,11 +140,11 @@ var start = module.exports = function(test, board) {
     t.plan(2);
     clients[2].send('/hello');
 
-    clients[0].once('hello', function() {
+    clients[0].once('message:hello', function() {
       t.pass('client:0 got message');
     });
 
-    clients[1].once('hello', function() {
+    clients[1].once('message:hello', function() {
       t.fail('client:1 got message');
     });
 
