@@ -71,29 +71,6 @@ var start = module.exports = function(test, board) {
     clients[2].announce({ room: newRoomId });
   });
 
-  test('client 0 leave, client 1 notified, fail on client 2 notified', function(t) {
-    t.plan(2);
-
-    function failTest() {
-      t.fail('captured announce message even though in a different room');
-    }
-
-    clients[2].once('peer:leave', failTest);
-    clients[1].once('peer:leave', function(id) {
-      t.equal(id, clients[0].id);
-    });
-
-    setTimeout(function() {
-      clients[2].removeListener('peer:leave', failTest);
-      t.pass('did not trigger an event for clients in original room');
-
-      // splice out the 0 client
-      clients.splice(0, 1);
-    }, 4000);
-
-    clients[0].leave();
-  });
-
   test('close connections', cleanup(board, clients));
 };
 
