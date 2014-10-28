@@ -13,7 +13,7 @@ var start = module.exports = function(test, board) {
   test('announce 0', function(t) {
     t.plan(2);
 
-    clients[0].once('roominfo', function(data) {
+    clients[0].once('message:roominfo', function(data) {
       t.ok(data && typeof data == 'object');
       t.equal(data.memberCount, 1, 'reported as 1st peer');
     });
@@ -24,7 +24,7 @@ var start = module.exports = function(test, board) {
   test('announce 1', function(t) {
     t.plan(2);
 
-    clients[1].once('roominfo', function(data) {
+    clients[1].once('message:roominfo', function(data) {
       t.ok(data && typeof data == 'object');
       t.equal(data.memberCount, 2, 'reported as 2nd peer');
     });
