@@ -5,13 +5,19 @@ var server = http.createServer();
 var switchboard = require('../../');
 
 function testClose() {
+  var quitTimer;
+
   test('close the server', function(t) {
     t.plan(1);
     server.close(function() {
+      clearTimeout(quitTimer);
       console.log('closed');
     });
 
     t.pass('server closed');
+
+    // force quit
+    quitTimer = setTimeout(process.exit.bind(process, 0), 1000);
   });
 }
 
