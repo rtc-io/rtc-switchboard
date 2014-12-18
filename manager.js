@@ -114,6 +114,9 @@ module.exports = function(primus, opts) {
       return;
     }
 
+    // trigger a manager level leave event for the peer
+    mgr('leave', spark);
+
     // remove the spark from the list, creating a new array
     sparks = sparks.filter(function(item) {
       return item !== spark;
