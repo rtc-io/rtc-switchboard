@@ -120,7 +120,7 @@ var start = module.exports = function(test, board) {
     clients[0].leave();
   });
 
-  // test('close connections', cleanup(board, clients));
+  // no close required as clients have been removed and movements tracked
 };
 
 if (! module.parent) {
