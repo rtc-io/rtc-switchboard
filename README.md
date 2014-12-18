@@ -264,6 +264,10 @@ the client-side signaller with the socket on the server side.
 This will allow routing of messages to the correct receipient when
 `/to` messages are received.
 
+### ping handler
+
+Will handle `/ping` messages
+
 ## License(s)
 
 ### Apache 2.0
