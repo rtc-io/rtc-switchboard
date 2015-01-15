@@ -38,8 +38,19 @@ var start = module.exports = function(test, board) {
   test('close connections', cleanup(board, clients));
 
   test('check room has been destroyed', function(t) {
+    var room = board.rooms.get(roomId);
+    var failTimer;
+
     t.plan(1);
-    t.notOk(board.rooms.get(roomId), 'room has been removed');
+    if (! room) {
+      return t.pass('room has been removed');
+    }
+
+    failTimer = setTimeout(t.fail.bind(t, 'room not destroyed'), 500);
+    board.once('room:destroy', function(room) {
+      t.equal(room, roomId, 'room has been removed');
+      clearTimeout(failTimer);
+    });
   });
 };
 
