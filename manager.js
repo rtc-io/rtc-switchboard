@@ -143,6 +143,7 @@ module.exports = function(primus, opts) {
 
   primus.on('connection', function(spark) {
     spark.on('data', processData(spark));
+    mgr('peer:connect', spark);
   });
 
   primus.on('disconnection', function(spark) {
@@ -154,6 +155,8 @@ module.exports = function(primus, opts) {
       console.log('disconnected peer: ' + spark.peerId);
       peers.delete(spark.peerId);
     }
+
+    mgr('peer:disconnect', spark);
   });
 
   mgr.library = serveLibrary;
