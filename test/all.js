@@ -10,4 +10,5 @@ server.start(function(test, board) {
   require('./room-events')(test, board);
   require('./to-messaging')(test, board);
   require('./signaller-durability')(test, board);
+  require('./peer-events')(test, board);
 });
