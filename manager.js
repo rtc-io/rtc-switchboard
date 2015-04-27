@@ -131,6 +131,17 @@ module.exports = function(primus, opts) {
     }
   });
 
+  function reset() {
+    rooms.keys().forEach(function(id) {
+      (rooms.get(id) || []).forEach(function(spark) {
+        spark.end();
+      });
+
+      // delete the room
+      rooms.delete(id);
+    });
+  }
+
   function serveLibrary(opts) {
     return function(req, res) {
       res.writeHead(200, {
@@ -162,6 +173,7 @@ module.exports = function(primus, opts) {
   mgr.library = serveLibrary;
   mgr.assignRoom = assignRoom;
   mgr.createSocket = primus.Socket;
+  mgr.reset = reset;
 
   return mgr;
 };
