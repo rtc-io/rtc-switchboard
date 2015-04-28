@@ -45,12 +45,14 @@ var start = module.exports = function(test, board) {
   test('switchboard does not emit a room:create event when the client joins the room', function(t) {
     t.plan(1);
 
-    board.once('room:create', function(name) {
+    function handleCreate(name) {
       t.fail('room:create event should not have fired');
-    });
+    }
+
+    board.once('room:create', handleCreate);
 
     setTimeout(function() {
-      board.removeAllListeners();
+      board.removeListener('room:create', handleCreate);
       t.pass('room:create event did not fire');
     }, 100);
 
@@ -60,12 +62,14 @@ var start = module.exports = function(test, board) {
   test('client:0 close, room:destroy does not fire', function(t) {
     t.plan(1);
 
-    board.once('room:destroy', function(name) {
+    function handleDestroy(name) {
       t.fail('room:destroy should not have fired');
-    });
+    }
+
+    board.once('room:destroy', handleDestroy);
 
     setTimeout(function() {
-      board.removeAllListeners();
+      board.removeListener('room:destroy', handleDestroy);
       t.pass('room:destroy event did not fire');
     }, 100);
 
