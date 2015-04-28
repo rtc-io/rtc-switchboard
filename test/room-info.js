@@ -13,7 +13,7 @@ var start = module.exports = function(test, board) {
   test('announce 0', function(t) {
     t.plan(4);
 
-    board.once('announce', function(data) {
+    board.once('announce', function(payload, peer, sender, data) {
       t.equal(data.id, clients[0].id);
       t.equal(data.room, roomId);
     });
@@ -29,7 +29,7 @@ var start = module.exports = function(test, board) {
   test('announce 1', function(t) {
     t.plan(4);
 
-    board.once('announce', function(data) {
+    board.once('announce', function(payload, peer, sender, data) {
       t.equal(data.id, clients[1].id);
       t.equal(data.room, roomId);
     });
