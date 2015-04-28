@@ -5,39 +5,39 @@ var uuid = require('uuid');
 
 var start = module.exports = function(test, board) {
   var clients = [];
-  var roomId = uuid.v4();
+  var roomIds = [uuid.v4(), uuid.v4(), uuid.v4()];
 
   test('connect 0', connect(board, clients, 0));
   test('connect 1', connect(board, clients, 1));
   test('connect 2', connect(board, clients, 2));
 
-  test('client:0 announce (no room)', function(t) {
+  test('client:0 announce (room:0)', function(t) {
     t.plan(2);
 
-    clients[0].announce();
-    board.once('announce', function(data) {
+    clients[0].announce({ room: roomIds[0] });
+    board.once('announce', function(payload, peer, sender, data) {
       t.equal(data.id, clients[0].id);
-      t.equal(data.room, undefined, 'no room specified - correct');
+      t.equal(data.room, roomIds[0]);
     });
   });
 
-  test('client:1 announce (room - room1)', function(t) {
+  test('client:1 announce (room:1)', function(t) {
     t.plan(2);
 
-    clients[1].announce({ room: 'room1' });
-    board.once('announce', function(data) {
+    clients[1].announce({ room: roomIds[1] });
+    board.once('announce', function(payload, peer, sender, data) {
       t.equal(data.id, clients[1].id);
-      t.equal(data.room, 'room1', 'room === room1');
+      t.equal(data.room, roomIds[1], 'room === room1');
     });
   });
 
-  test('client:2 announce (no room)', function(t) {
+  test('client:2 announce (room:0)', function(t) {
     t.plan(4);
 
-    clients[2].announce();
-    board.once('announce', function(data) {
+    clients[2].announce({ room: roomIds[0] });
+    board.once('announce', function(payload, peer, sender, data) {
       t.equal(data.id, clients[2].id);
-      t.equal(data.room, undefined, 'no room specified - correct');
+      t.equal(data.room, roomIds[0]);
     });
 
     clients[0].once('peer:announce', function(data) {
@@ -72,13 +72,13 @@ var start = module.exports = function(test, board) {
     }, 500);
   });
 
-  test('client:2 reannounce (room - room1)', function(t) {
+  test('client:2 reannounce (room:1)', function(t) {
     t.plan(3);
 
-    clients[2].announce({ room: 'room1' });
-    board.once('announce', function(data) {
+    clients[2].announce({ room: roomIds[1] });
+    board.once('announce', function(payload, peer, sender, data) {
       t.equal(data.id, clients[2].id);
-      t.equal(data.room, 'room1', 'room === room1');
+      t.equal(data.room, roomIds[1]);
     });
 
     clients[1].on('peer:announce', function(data) {
@@ -104,13 +104,13 @@ var start = module.exports = function(test, board) {
     }, 500);
   });
 
-  test('client:0 reannounce (room - room2)', function(t) {
+  test('client:0 reannounce (room:2)', function(t) {
     t.plan(3);
 
-    clients[0].announce({ room: 'room2' });
-    board.once('announce', function(data) {
+    clients[0].announce({ room: roomIds[2] });
+    board.once('announce', function(payload, peer, sender, data) {
       t.equal(data.id, clients[0].id);
-      t.equal(data.room, 'room2', 'room === room2');
+      t.equal(data.room, roomIds[2]);
     });
 
     clients[0].once('message:roominfo', function(data) {
@@ -118,17 +118,17 @@ var start = module.exports = function(test, board) {
     });
   });
 
-  test('client:2 reannounce (room - room2)', function(t) {
+  test('client:2 reannounce (room:2)', function(t) {
     t.plan(4);
 
-    clients[2].announce({ room: 'room2' });
+    clients[2].announce({ room: roomIds[2] });
     clients[2].once('message:roominfo', function(data) {
       t.equal(data.memberCount, 2, 'room has two members');
     });
 
-    board.once('announce', function(data) {
+    board.once('announce', function(payload, peer, sender, data) {
       t.equal(data.id, clients[2].id);
-      t.equal(data.room, 'room2', 'room === room2');
+      t.equal(data.room, roomIds[2]);
     });
 
     clients[0].once('peer:update', function(data) {
