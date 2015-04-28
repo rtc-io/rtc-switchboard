@@ -16,23 +16,29 @@ var start = module.exports = function(test, board) {
   test('announce 1', announce(board, clients, 1, { room: roomId }));
 
   test('check 2 room members', function(t) {
+    var room = board.rooms.get(roomId);
+
     t.plan(2);
-    t.ok(board.rooms.get(roomId), 'have room');
-    t.equal(board.rooms.get(roomId).length, 2);
+    t.ok(room && room.members, 'have room');
+    t.equal(room.members.length, 2);
   });
 
   test('announce 1 in new room', announce(board, clients, 1, { room: room2 }));
 
   test('check 1 member in original room', function(t) {
+    var room = board.rooms.get(roomId);
+
     t.plan(2);
-    t.ok(board.rooms.get(roomId), 'have room');
-    t.equal(board.rooms.get(roomId).length, 1);
+    t.ok(room && room.members, 'have room');
+    t.equal(room.members.length, 1);
   });
 
   test('check 1 member in new room', function(t) {
+    var room = board.rooms.get(room2);
+
     t.plan(2);
-    t.ok(board.rooms.get(room2), 'have room');
-    t.equal(board.rooms.get(room2).length, 1);
+    t.ok(room && room.members, 'have room');
+    t.equal(room.members.length, 1);
   });
 
   test('close connections', cleanup(board, clients));
