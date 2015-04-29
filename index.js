@@ -8,9 +8,8 @@ var defaults = require('cog/defaults');
   # rtc-switchboard
 
   This is an rtc.io signalling server (counterpart to
-  [rtc-signaller](https://github.com/rtc-io/rtc-signaller)) that makes use of
-  the excellent realtime abstraction library,
-  [primus](https://github.com/primus/primus). It has been designed and built
+  [rtc-signaller](https://github.com/rtc-io/rtc-signaller)) uses websockets to
+  communicate with signalling clients. It has been designed and built
   primarily as a _reference implementation_ for a signalling server and is
   not designed to be deployed at scale.
 
@@ -33,8 +32,7 @@ var defaults = require('cog/defaults');
   ```
   git clone https://github.com/rtc-io/rtc-switchboard.git
   cd rtc-switchboard
-  npm install
-  node server.js
+  npm install && npm start
   ```
 
   If you wish to run the server on a specific port, then set the `NODE_PORT`
@@ -46,7 +44,7 @@ var defaults = require('cog/defaults');
 
   ## Usage: API
 
-  To create an application using primus signalling, see the following
+  To create an application using switchboard signalling, see the following
   examples:
 
   ### Pure Node HTTP
@@ -56,25 +54,6 @@ var defaults = require('cog/defaults');
   ### Using Express
 
   <<< examples/express.js
-
-  ## Including the Primus Client
-
-  The `rtc-switchboard` makes use of the slick WebSockets abstraction library
-  [Primus](https://github.com/primus/primus). To work with the server, you
-  will need to include the `primus.js` library in your application prior to
-  attempting a websocket connection.
-
-  If you are working with a local standalone server, the following script
-  tag will likely do the job:
-
-  ```html
-  <script src="http://localhost:3000/rtc.io/primus.js"></script>
-  ```
-
-  __NOTE:__ A specific call to include primus is not required if you are
-  working with particular rtc.io library (such as
-  [rtc-glue](https://github.com/rtc-io/rtc-glue)), as they will ensure the
-  primus library has been included prior to running their internal code.
 
   ## Usage: Docker
 
@@ -86,18 +65,8 @@ var defaults = require('cog/defaults');
 
   <<< docs/logging.md
 
-  ## Reference
-
 **/
 
-/**
-  ### switchboard(server, opts?)
-
-  Create the switchboard which uses primus under the hood. By default calling
-  this function will create a new `Primus` instance and use the
-  pure [websockets adapter](https://github.com/primus/primus#websockets).
-
-**/
 module.exports = function(server, opts) {
   var WebSocketServer = require('ws').Server;
   var wss = new WebSocketServer({ server: server });
