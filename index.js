@@ -1,6 +1,7 @@
 /* jshint node: true */
 'use strict';
 
+var debug = require('debug')('rtc-switchboard');
 var defaults = require('cog/defaults');
 
 /**
@@ -125,7 +126,7 @@ module.exports = function(server, opts) {
     ws.on('message', peer.process);
     peer.on('data', function(data) {
       if (ws.readyState === 1) {
-        // console.log('OUT <== ' + data);
+        debug('<== %s %s', peer.id, data);
         ws.send(data);
       }
     });
