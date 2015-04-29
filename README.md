@@ -159,45 +159,9 @@ start:
 
 <https://github.com/synctree/docker-rtc-switchboard>
 
-## Writing Custom Command Handlers
-
-When you initialize the switchboard, you are able to provide custom handlers
-for specific commands that you want handled by the switchboard. Imagine
-for instance, that we want our switchboard to do something clever when a
-client sends an `/img` command.
-
-We would create our server to include the custom `img` command handler:
-
-```js
-var server = require('http').createServer();
-var Primus = require('primus');
-
-// create the signaller, providing our own primus instance (using engine.io)
-var switchboard = require('rtc-switchboard')(server, {
-  servelib: true,
-  handlers: {
-    img: require('rtc-switchboard/handlers/img')
-  }
-});
-
-// start the server
-server.listen(3000);
-```
-
-And then we would write a small module for the handler:
-
-```js
-module.exports = function(mgr, spark, data, payload) {
-  console.log('received an img command with payload: ', payload);
-};
-```
-
 ## Logging and Analytics using the `data` event
 
-Every message that flows through the switchboard (whether handled or not)
-can be logged through tapping into the `data` event.  The example below
-demonstrates how this can be done with a node logging module like
-[bunyan](https://github.com/trentm/node-bunyan):
+Every message that flows through the switchboard (whether handled or not) can be logged through tapping into the `data` event.  The example below demonstrates how this can be done with a node logging module like [bunyan](https://github.com/trentm/node-bunyan):
 
 ```js
 var express = require('express');
@@ -210,9 +174,6 @@ var log = bunyan.createLogger({ name: 'rtc-switchboard' });
 // create the switchboard
 var switchboard = require('rtc-switchboard')(server);
 
-// we need to expose the primus library
-app.get('/rtc.io/primus.js', switchboard.library());
-
 server.listen(port, function(err) {
   if (err) {
     return;
@@ -224,21 +185,18 @@ server.listen(port, function(err) {
 switchboard.on('data', function(data, peerId, spark) {
   log.info({ peer: peerId }, 'received: ' + data);
 });
+
 ```
 
-As can be seen in the example above, the handlers of the `data` event can
-expect to receive three arguments to the handler function, as per the code
-snippet below:
+As can be seen in the example above, the handlers of the `data` event can expect to receive three arguments to the handler function, as per the code snippet below:
 
 ```js
 switchboard.on('data', function(data, peerId, spark) {
 });
 ```
 
-The `data` is the raw data of that has been sent from the client, the
-`peerId` is the id of the peer sending the data (this will be `undefined` if
-it is a message received prior to an `/announce` command).  Finally we have
-the raw primus `spark` that can be examined for additional information.
+The `data` is the raw data of that has been sent from the client, the `peerId` is the id of the peer sending the data (this will be `undefined` if it is a message received prior to an `/announce` command).
+
 
 ## Reference
 
