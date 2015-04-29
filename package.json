@@ -3,6 +3,7 @@
   "version": "2.3.0",
   "description": "Signalling for rtc-io components using primus",
   "main": "index.js",
+  "stability": "unstable",
   "scripts": {
     "start": "node --nouse-idle-notification server.js",
     "test": "node test/all.js",
