@@ -9,3 +9,5 @@ We would create our server to include the custom `img` command handler:
 And then we would write a small module for the handler:
 
 <<< examples/handlers/img.js
+
+__NOTE:__ This feature has not yet been implemented in the `3.x` release of rtc-switchboard.
