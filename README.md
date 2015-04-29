@@ -10,7 +10,7 @@ not designed to be deployed at scale.
 
 [![NPM](https://nodei.co/npm/rtc-switchboard.png)](https://nodei.co/npm/rtc-switchboard/)
 
-[![Build Status](https://img.shields.io/travis/rtc-io/rtc-switchboard.svg?branch=master)](https://travis-ci.org/rtc-io/rtc-switchboard) [![unstable](https://img.shields.io/badge/stability-unstable-yellowgreen.svg)](https://github.com/dominictarr/stability#unstable) 
+[![unstable](https://img.shields.io/badge/stability-unstable-yellowgreen.svg)](https://github.com/dominictarr/stability#unstable) [![Build Status](https://api.travis-ci.org/rtc-io/rtc-switchboard.svg?branch=master)](https://travis-ci.org/rtc-io/rtc-switchboard) [![bitHound Score](https://www.bithound.io/github/rtc-io/rtc-switchboard/badges/score.svg)](https://www.bithound.io/github/rtc-io/rtc-switchboard) 
 
 ## Try it out
 
@@ -64,7 +64,7 @@ examples:
 
 ```js
 var server = require('http').createServer();
-var switchboard = require('./')(server, { servelib: true });
+var switchboard = require('rtc-switchboard/')(server, { servelib: true });
 var port = parseInt(process.env.NODE_PORT || process.env.PORT || process.argv[2], 10) || 3000;
 var replify = require('replify');
 
@@ -122,9 +122,6 @@ var port = process.env.PORT || 3000;
 // create the switchboard
 var switchboard = require('rtc-switchboard')(server);
 
-// we need to expose the primus library
-app.get('/rtc.io/primus.js', switchboard.library());
-
 server.listen(port, function(err) {
   if (err) {
     return;
@@ -132,6 +129,7 @@ server.listen(port, function(err) {
 
   console.log('server listening on port: ' + port);
 });
+
 ```
 
 ## Including the Primus Client
@@ -178,7 +176,7 @@ var Primus = require('primus');
 var switchboard = require('rtc-switchboard')(server, {
   servelib: true,
   handlers: {
-    img: require('./handlers/img')
+    img: require('rtc-switchboard/handlers/img')
   }
 });
 
@@ -250,29 +248,11 @@ Create the switchboard which uses primus under the hood. By default calling
 this function will create a new `Primus` instance and use the
 pure [websockets adapter](https://github.com/primus/primus#websockets).
 
-## Custom Message Handlers
-
-The socket server is configured to handle some specific rtc.io signaller
-messages.  The handlers are stored in the `handlers/` folder of the
-repository and have details outlined below.
-
-### announce handler
-
-Will handle `/announce` messages and associate the peer id assigned by
-the client-side signaller with the socket on the server side.
-
-This will allow routing of messages to the correct receipient when
-`/to` messages are received.
-
-### ping handler
-
-Will handle `/ping` messages
-
 ## License(s)
 
 ### Apache 2.0
 
-Copyright 2014 National ICT Australia Limited (NICTA)
+Copyright 2015 National ICT Australia Limited (NICTA)
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
