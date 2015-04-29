@@ -2,7 +2,6 @@
 'use strict';
 
 var debug = require('debug')('rtc-switchboard');
-var defaults = require('cog/defaults');
 
 /**
   # rtc-switchboard
