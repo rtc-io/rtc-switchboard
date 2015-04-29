@@ -8,9 +8,6 @@ var log = bunyan.createLogger({ name: 'rtc-switchboard' });
 // create the switchboard
 var switchboard = require('..')(server);
 
-// we need to expose the primus library
-app.get('/rtc.io/primus.js', switchboard.library());
-
 server.listen(port, function(err) {
   if (err) {
     return;
