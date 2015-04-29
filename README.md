@@ -1,9 +1,8 @@
 # rtc-switchboard
 
 This is an rtc.io signalling server (counterpart to
-[rtc-signaller](https://github.com/rtc-io/rtc-signaller)) that makes use of
-the excellent realtime abstraction library,
-[primus](https://github.com/primus/primus). It has been designed and built
+[rtc-signaller](https://github.com/rtc-io/rtc-signaller)) uses websockets to
+communicate with signalling clients. It has been designed and built
 primarily as a _reference implementation_ for a signalling server and is
 not designed to be deployed at scale.
 
@@ -44,8 +43,7 @@ the server:
 ```
 git clone https://github.com/rtc-io/rtc-switchboard.git
 cd rtc-switchboard
-npm install
-node server.js
+npm install && npm start
 ```
 
 If you wish to run the server on a specific port, then set the `NODE_PORT`
@@ -57,7 +55,7 @@ NODE_PORT=8997 node server.js
 
 ## Usage: API
 
-To create an application using primus signalling, see the following
+To create an application using switchboard signalling, see the following
 examples:
 
 ### Pure Node HTTP
@@ -132,25 +130,6 @@ server.listen(port, function(err) {
 
 ```
 
-## Including the Primus Client
-
-The `rtc-switchboard` makes use of the slick WebSockets abstraction library
-[Primus](https://github.com/primus/primus). To work with the server, you
-will need to include the `primus.js` library in your application prior to
-attempting a websocket connection.
-
-If you are working with a local standalone server, the following script
-tag will likely do the job:
-
-```html
-<script src="http://localhost:3000/rtc.io/primus.js"></script>
-```
-
-__NOTE:__ A specific call to include primus is not required if you are
-working with particular rtc.io library (such as
-[rtc-glue](https://github.com/rtc-io/rtc-glue)), as they will ensure the
-primus library has been included prior to running their internal code.
-
 ## Usage: Docker
 
 If you are interested in deploying an instance of `rtc-switchboard` using
@@ -197,14 +176,6 @@ switchboard.on('data', function(data, peerId, spark) {
 
 The `data` is the raw data of that has been sent from the client, the `peerId` is the id of the peer sending the data (this will be `undefined` if it is a message received prior to an `/announce` command).
 
-
-## Reference
-
-### switchboard(server, opts?)
-
-Create the switchboard which uses primus under the hood. By default calling
-this function will create a new `Primus` instance and use the
-pure [websockets adapter](https://github.com/primus/primus#websockets).
 
 ## License(s)
 
