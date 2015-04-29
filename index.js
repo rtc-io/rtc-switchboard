@@ -84,6 +84,8 @@ var defaults = require('cog/defaults');
 
   <https://github.com/synctree/docker-rtc-switchboard>
 
+  <<< docs/logging.md
+
   ## Reference
 
 **/
