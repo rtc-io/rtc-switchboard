@@ -1,6 +1,5 @@
 var test = require('tape');
 var http = require('http');
-var Primus = require('primus');
 var server = http.createServer();
 var switchboard = require('../../');
 
