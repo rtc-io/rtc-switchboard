@@ -14,7 +14,7 @@ var start = module.exports = function(test, board) {
   test('announce 0', function(t) {
     t.plan(2);
 
-    board.once('announce', function(data) {
+    board.once('announce', function(payload, peer, sender, data) {
       t.equal(data.id, clients[0].id);
       t.equal(data.room, roomId);
     });
@@ -31,7 +31,9 @@ var start = module.exports = function(test, board) {
 
     t.plan(4);
     clients[0].once('peer:announce', checkData);
-    board.once('announce', checkData);
+    board.once('announce', function(payload, peer, sender, data) {
+      checkData(data);
+    });
 
     clients[1].announce({ room: roomId });
   });
@@ -53,7 +55,7 @@ var start = module.exports = function(test, board) {
 
     t.plan(3);
 
-    board.once('announce', function(data) {
+    board.once('announce', function(payload, peer, sender, data) {
       t.equal(data.id, clients[2].id);
       t.equal(data.room, newRoomId);
     });
