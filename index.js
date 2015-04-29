@@ -2,7 +2,6 @@
 'use strict';
 
 var defaults = require('cog/defaults');
-var Primus = require('primus');
 
 /**
   # rtc-switchboard
@@ -135,42 +134,42 @@ var Primus = require('primus');
 
 **/
 module.exports = function(server, opts) {
-  // create the primus instance
-  var primus = (opts || {}).primus || new Primus(server, defaults(opts, {
-    parser: require('./parser-noop'),
-    timeout: false
-  }));
+  var WebSocketServer = require('ws').Server;
+  var wss = new WebSocketServer({ server: server });
+  var board = require('rtc-switch')();
+  var connections = [];
 
-  if (opts && opts.servelib) {
-    server.on('request', function(req, res) {
-      if (req.url === '/rtc.io/primus.js') {
-        res.writeHead(200, {
-          'content-type': 'application/javascript'
-        });
+  wss.on('connection', function connection(ws) {
+    var peer = board.connect();
 
-        res.end(primus.library());
+    // add the socket to the connection list
+    connections.push(ws);
+
+    ws.on('message', peer.process);
+    peer.on('data', function(data) {
+      if (ws.readyState === 1) {
+        // console.log('OUT <== ' + data);
+        ws.send(data);
       }
     });
-  }
 
-  primus.transformer.on('previous::upgrade', function(req, socket, head) {
-    abortConnection(socket, 404, 'Not Found');
+    ws.on('close', function() {
+      // trigger the peer leave
+      peer.leave();
+
+      // splice out the connection
+      connections = connections.filter(function(conn) {
+        return conn !== ws;
+      });
+    });
   });
 
-  return require('./manager')(primus, opts);
-};
+  // add a reset helper
+  board.reset = function() {
+    connections.splice(0).forEach(function(conn) {
+      conn.close();
+    });
+  };
 
-function abortConnection(socket, code, name) {
-  try {
-    var response = [
-      'HTTP/1.1 ' + code + ' ' + name,
-      'Content-type: text/html'
-    ];
-    socket.write(response.concat('', '').join('\r\n'));
-  }
-  catch (e) { /* ignore errors - we've aborted this connection */ }
-  finally {
-    // ensure that an early aborted connection is shut down completely
-    try { socket.destroy(); } catch (e) {}
-  }
-}
+  return board;
+};
