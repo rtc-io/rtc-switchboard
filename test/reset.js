@@ -9,11 +9,12 @@ var start = module.exports = function(test, board) {
 
   test('connect 0', connect(board, clients, 0));
   test('connect 1', connect(board, clients, 1));
+  test('connect 2', connect(board, clients, 2));
 
   test('announce 0', function(t) {
     t.plan(2);
 
-    board.once('announce', function(data) {
+    board.once('announce', function(payload, peer, sender, data) {
       t.equal(data.id, clients[0].id);
       t.equal(data.room, roomId);
     });
@@ -30,7 +31,9 @@ var start = module.exports = function(test, board) {
 
     t.plan(4);
     clients[0].once('peer:announce', checkData);
-    board.once('announce', checkData);
+    board.once('announce', function(payload, peer, sender, data) {
+      checkData(data);
+    });
 
     clients[1].announce({ room: roomId });
   });
@@ -56,6 +59,37 @@ var start = module.exports = function(test, board) {
     });
 
     board.reset();
+  });
+
+  test('announce 2', function(t) {
+    t.plan(2);
+
+    board.once('announce', function(payload, peer, sender, data) {
+      t.equal(data.id, clients[2].id);
+      t.equal(data.room, roomId);
+    });
+
+    clients[2].announce({ room: roomId });
+  });
+
+  test('peer:0 and peer:1 successfully learn about peer:2', function(t) {
+    var remaining = 2;
+    var timeout = setTimeout(t.fail.bind(t, 'did not find peers'), 5000);
+
+    function handleAnnounce(data) {
+      t.equal(data.id, clients[2].id, 'found peer:2');
+      remaining -= 1;
+
+      if (remaining === 0) {
+        clearTimeout(timeout);
+        t.pass('all peers found');
+      }
+    }
+
+    t.plan(remaining + 1);
+    clients.slice(0,2).forEach(function(client) {
+      client.once('peer:announce', handleAnnounce);
+    });
   });
 };
 
