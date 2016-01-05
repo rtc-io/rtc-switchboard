@@ -43,5 +43,9 @@
     "tape": "^4.0.0",
     "uuid": "^2.0.1",
     "whisk": "^1.0.0"
+  },
+  "optionalDependencies": {
+    "bufferutil": "^1.2.1",
+    "utf-8-validate": "^1.2.1"
   }
 }
