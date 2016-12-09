@@ -9,11 +9,11 @@ not designed to be deployed at scale.
 
 [![NPM](https://nodei.co/npm/rtc-switchboard.png)](https://nodei.co/npm/rtc-switchboard/)
 
-[![unstable](https://img.shields.io/badge/stability-unstable-yellowgreen.svg)](https://github.com/dominictarr/stability#unstable) [![Build Status](https://api.travis-ci.org/rtc-io/rtc-switchboard.svg?branch=master)](https://travis-ci.org/rtc-io/rtc-switchboard) [![bitHound Score](https://www.bithound.io/github/rtc-io/rtc-switchboard/badges/score.svg)](https://www.bithound.io/github/rtc-io/rtc-switchboard) 
+[![unstable](https://img.shields.io/badge/stability-unstable-yellowgreen.svg)](https://github.com/dominictarr/stability#unstable) [![Build Status](https://api.travis-ci.org/rtc-io/rtc-switchboard.svg?branch=master)](https://travis-ci.org/rtc-io/rtc-switchboard) [![bitHound Score](https://www.bithound.io/github/rtc-io/rtc-switchboard/badges/score.svg)](https://www.bithound.io/github/rtc-io/rtc-switchboard)
 
 ## Try it out
 
-If you would like to our test signalling server (no uptime guaranteed) then
+If you would like to use our test signalling server (no uptime guaranteed) then
 you can use [rtc-quickconnect](https://github.com/rtc-io/rtc-quickconnect)
 and take it for a spin:
 
@@ -36,7 +36,7 @@ Other examples are available in the [guidebook](http://guidebook.rtc.io)
 
 ## Usage: Standalone
 
-If you wish to use `rtc-switchboard` on it's own to test signalling,
+If you wish to use `rtc-switchboard` on its own to test signalling,
 then you can simply clone this repository, install dependencies and start
 the server:
 
